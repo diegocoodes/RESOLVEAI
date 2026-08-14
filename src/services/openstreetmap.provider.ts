@@ -26,45 +26,32 @@ type OverpassElement = {
 };
 
 type TagCondition = Record<string, string>;
-type SegmentFilter = { conditions: TagCondition; related?: boolean };
 type SegmentRule = {
   aliases: string[];
   resultNiche: string;
-  filters: SegmentFilter[];
-  relatedLabel?: string;
+  filters: TagCondition[];
 };
 
 const SEGMENT_RULES: SegmentRule[] = [
-  {
-    aliases: ["personal trainer", "personal training", "personal"],
-    resultNiche: "Academia / Fitness",
-    filters: [
-      { conditions: { office: "personal_trainer" } },
-      { conditions: { craft: "personal_trainer" } },
-      { conditions: { leisure: "fitness_centre" }, related: true },
-      { conditions: { leisure: "sports_centre", sport: "fitness" }, related: true },
-    ],
-    relatedLabel: "Academia ou estúdio relacionado a personal trainers",
-  },
-  { aliases: ["nutricionista", "nutrição", "nutricao"], resultNiche: "Nutricionista", filters: [{ conditions: { healthcare: "dietitian" } }, { conditions: { healthcare: "nutrition_counselling" } }] },
-  { aliases: ["psicólogo", "psicologo", "psicóloga", "psicologa"], resultNiche: "Psicologia", filters: [{ conditions: { healthcare: "psychotherapist" } }, { conditions: { healthcare: "psychologist" } }, { conditions: { office: "psychotherapist" } }] },
-  { aliases: ["fisioterapeuta", "fisioterapia"], resultNiche: "Fisioterapia", filters: [{ conditions: { healthcare: "physiotherapist" } }] },
-  { aliases: ["dentista", "odontologia"], resultNiche: "Odontologia", filters: [{ conditions: { amenity: "dentist" } }, { conditions: { healthcare: "dentist" } }] },
-  { aliases: ["advogado", "advogada", "advocacia"], resultNiche: "Advocacia", filters: [{ conditions: { office: "lawyer" } }] },
-  { aliases: ["contador", "contadora", "contabilidade"], resultNiche: "Contabilidade", filters: [{ conditions: { office: "accountant" } }, { conditions: { office: "tax_advisor" } }] },
-  { aliases: ["corretor", "corretora", "imobiliária", "imobiliaria"], resultNiche: "Imobiliária", filters: [{ conditions: { office: "estate_agent" } }] },
-  { aliases: ["barbearia", "barbeiro"], resultNiche: "Barbearia", filters: [{ conditions: { shop: "hairdresser", hairdresser: "barber" } }, { conditions: { shop: "barber" } }] },
-  { aliases: ["salão", "salao", "cabeleireiro"], resultNiche: "Salão de beleza", filters: [{ conditions: { shop: "hairdresser" } }] },
-  { aliases: ["estética", "estetica"], resultNiche: "Estética", filters: [{ conditions: { shop: "beauty" } }, { conditions: { beauty: "aesthetics" } }] },
-  { aliases: ["academia", "fitness", "crossfit"], resultNiche: "Academia / Fitness", filters: [{ conditions: { leisure: "fitness_centre" } }, { conditions: { leisure: "sports_centre", sport: "fitness" } }] },
-  { aliases: ["clínica", "clinica"], resultNiche: "Clínica", filters: [{ conditions: { amenity: "clinic" } }, { conditions: { healthcare: "clinic" } }] },
-  { aliases: ["restaurante"], resultNiche: "Restaurante", filters: [{ conditions: { amenity: "restaurant" } }] },
-  { aliases: ["oficina", "mecânico", "mecanico"], resultNiche: "Oficina mecânica", filters: [{ conditions: { shop: "car_repair" } }, { conditions: { craft: "car_repair" } }] },
-  { aliases: ["assistência técnica", "assistencia tecnica"], resultNiche: "Assistência técnica", filters: [{ conditions: { shop: "electronics_repair" } }, { conditions: { craft: "electronics_repair" } }, { conditions: { shop: "electronics", repair: "yes" } }, { conditions: { shop: "computer", repair: "yes" } }, { conditions: { shop: "mobile_phone", repair: "yes" } }] },
-  { aliases: ["fotógrafo", "fotografo", "fotografia"], resultNiche: "Fotografia", filters: [{ conditions: { craft: "photographer" } }, { conditions: { shop: "photo" } }] },
+  { aliases: ["personal trainer", "personal training", "personal"], resultNiche: "Personal Trainer", filters: [{ office: "personal_trainer" }, { craft: "personal_trainer" }] },
+  { aliases: ["nutri", "nutricionista", "nutrição", "nutricao"], resultNiche: "Nutricionista", filters: [{ healthcare: "dietitian" }, { healthcare: "nutrition_counselling" }] },
+  { aliases: ["psicólogo", "psicologo", "psicóloga", "psicologa"], resultNiche: "Psicologia", filters: [{ healthcare: "psychotherapist" }, { healthcare: "psychologist" }, { office: "psychotherapist" }] },
+  { aliases: ["fisioterapeuta", "fisioterapia"], resultNiche: "Fisioterapia", filters: [{ healthcare: "physiotherapist" }] },
+  { aliases: ["dentista", "odontologia"], resultNiche: "Odontologia", filters: [{ amenity: "dentist" }, { healthcare: "dentist" }] },
+  { aliases: ["advogado", "advogada", "advocacia"], resultNiche: "Advocacia", filters: [{ office: "lawyer" }] },
+  { aliases: ["contador", "contadora", "contabilidade"], resultNiche: "Contabilidade", filters: [{ office: "accountant" }, { office: "tax_advisor" }] },
+  { aliases: ["corretor", "corretora", "imobiliária", "imobiliaria"], resultNiche: "Imobiliária", filters: [{ office: "estate_agent" }] },
+  { aliases: ["barbearia", "barbeiro"], resultNiche: "Barbearia", filters: [{ shop: "hairdresser", hairdresser: "barber" }, { shop: "barber" }] },
+  { aliases: ["salão", "salao", "cabeleireiro"], resultNiche: "Salão de beleza", filters: [{ shop: "hairdresser" }] },
+  { aliases: ["estética", "estetica"], resultNiche: "Estética", filters: [{ shop: "beauty" }, { beauty: "aesthetics" }] },
+  { aliases: ["academia", "fitness", "crossfit"], resultNiche: "Academia / Fitness", filters: [{ leisure: "fitness_centre" }, { leisure: "sports_centre", sport: "fitness" }] },
+  { aliases: ["clínica", "clinica"], resultNiche: "Clínica", filters: [{ amenity: "clinic" }, { healthcare: "clinic" }] },
+  { aliases: ["restaurante"], resultNiche: "Restaurante", filters: [{ amenity: "restaurant" }] },
+  { aliases: ["oficina", "mecânico", "mecanico"], resultNiche: "Oficina mecânica", filters: [{ shop: "car_repair" }, { craft: "car_repair" }] },
+  { aliases: ["assistência técnica", "assistencia tecnica"], resultNiche: "Assistência técnica", filters: [{ shop: "electronics_repair" }, { craft: "electronics_repair" }, { shop: "electronics", repair: "yes" }, { shop: "computer", repair: "yes" }, { shop: "mobile_phone", repair: "yes" }] },
+  { aliases: ["fotógrafo", "fotografo", "fotografia"], resultNiche: "Fotografia", filters: [{ craft: "photographer" }, { shop: "photo" }] },
 ];
 
-const POI_KEYS = ["amenity", "office", "shop", "craft", "leisure", "healthcare", "tourism"];
 const DEFAULT_OVERPASS_URLS = [
   "https://overpass-api.de/api/interpreter",
   "https://overpass.private.coffee/api/interpreter",
@@ -105,25 +92,21 @@ function quoteOverpass(value: string) {
   return JSON.stringify(value);
 }
 
-function phraseRegex(value: string) {
-  const escapedTokens = value.trim().split(/[^\p{L}\p{N}]+/u).filter((token) => token.length > 1).map((token) => token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
-  if (!escapedTokens.length) return undefined;
-  return `(^|[^[:alnum:]])${escapedTokens.join("[^[:alnum:]]+")}([^[:alnum:]]|$)`;
-}
-
-function selector(conditions: TagCondition, scope: string) {
-  return `nwr${Object.entries(conditions).map(([key, value]) => `[${quoteOverpass(key)}=${quoteOverpass(value)}]`).join("")}${scope};`;
+function nameSelector(value: string) {
+  const escapedTokens = value.trim().split(/[^\p{L}\p{N}]+/u).filter((token) => token.length > 1).map((token) => ({
+    normalized: normalize(token),
+    escaped: token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+  }));
+  if (!escapedTokens.length) return `nwr["name"~${quoteOverpass(value.trim())},i];`;
+  const filters = escapedTokens.map(({ normalized, escaped }) => {
+    const suffix = normalized === "nutri" ? "" : "s?([^[:alnum:]]|$)";
+    return `["name"~${quoteOverpass(`(^|[^[:alnum:]])${escaped}${suffix}`)},i]`;
+  }).join("");
+  return `nwr${filters};`;
 }
 
 export function buildOverpassQuery(niche: string, bbox: [number, number, number, number]) {
-  const rule = findSegmentRule(niche);
-  const namePattern = phraseRegex(niche);
-  const scope = "";
-  const selectors = rule?.filters.map((filter) => selector(filter.conditions, scope)) ?? [];
-
-  if (!rule && namePattern) selectors.push(`nwr["name"~${quoteOverpass(namePattern)},i]${scope};`);
-
-  return `[out:json][timeout:25][bbox:${bbox.join(",")}];(${selectors.join("")});out center tags 200;`;
+  return `[out:json][timeout:25][bbox:${bbox.join(",")}];(${nameSelector(niche)});out center tags 200;`;
 }
 
 function tag(tags: Record<string, string>, ...names: string[]) {
@@ -131,17 +114,30 @@ function tag(tags: Record<string, string>, ...names: string[]) {
   return undefined;
 }
 
+function nameMatches(name: string, niche: string) {
+  const nameTokens = tokens(name);
+  const queryTokens = tokens(niche);
+  return queryTokens.length > 0 && queryTokens.every((queryToken) => nameTokens.some((nameToken) => queryToken === "nutri"
+    ? nameToken.startsWith(queryToken)
+    : nameToken === queryToken || nameToken === `${queryToken}s`));
+}
+
 function conditionMatches(tags: Record<string, string>, conditions: TagCondition) {
   return Object.entries(conditions).every(([key, value]) => tags[key]?.toLocaleLowerCase("pt-BR") === value);
 }
 
-function nameMatches(name: string, niche: string, rule?: SegmentRule) {
-  const nameTokens = new Set(tokens(name));
-  const queryTokens = tokens(niche);
-  const aliases = new Set(rule?.aliases.flatMap(tokens) ?? []);
-  const distinctiveTokens = queryTokens.filter((token) => !aliases.has(token));
-  const requiredTokens = distinctiveTokens.length ? distinctiveTokens : queryTokens;
-  return requiredTokens.length > 0 && requiredTokens.every((token) => nameTokens.has(token));
+function isClearlyNotAnIndividualProfessional(tags: Record<string, string>, name: string, rule?: SegmentRule) {
+  if (["school", "college", "university", "courthouse", "townhall", "police", "library"].includes(tags.amenity ?? "")) return true;
+  if (tags.office === "government" || tags.government) return true;
+
+  if (rule?.resultNiche === "Personal Trainer") {
+    const nameTokens = new Set(tokens(name));
+    if (["fitness_centre", "sports_centre", "stadium", "sports_hall"].includes(tags.leisure ?? "")) return true;
+    if (["academia", "studio", "estudio", "fitness", "crossfit"].some((token) => nameTokens.has(token))) return true;
+  }
+
+  if (rule?.resultNiche === "Nutricionista" && tags.shop && !rule.filters.some((filter) => conditionMatches(tags, filter))) return true;
+  return false;
 }
 
 function formatAddress(tags: Record<string, string>, locationLabel: string) {
@@ -255,10 +251,9 @@ export class OpenStreetMapProvider implements LeadProvider {
       const tags = element.tags ?? {};
       const businessName = tag(tags, "name", "brand", "operator")?.trim();
       if (!businessName) return [];
-      if (!rule && !POI_KEYS.some((key) => tags[key])) return [];
-      const matchedFilter = rule?.filters.find((filter) => conditionMatches(tags, filter.conditions));
-      const exactName = nameMatches(businessName, params.niche, rule);
-      if (!matchedFilter && !exactName) return [];
+      if (!nameMatches(businessName, params.niche)) return [];
+      if (isClearlyNotAnIndividualProfessional(tags, businessName, rule)) return [];
+      const professionalTag = rule?.filters.some((filter) => conditionMatches(tags, filter)) ?? false;
 
       const website = tag(tags, "website", "contact:website", "url");
       if (params.withoutWebsite && website) return [];
@@ -271,26 +266,18 @@ export class OpenStreetMapProvider implements LeadProvider {
       seen.add(externalId);
       seen.add(signature);
 
-      const matchType = exactName ? "name" : matchedFilter?.related ? "related" : "category";
-      const matchLabel = matchType === "name"
-        ? "Nome correspondente à busca"
-        : matchType === "related"
-          ? rule?.relatedLabel ?? "Categoria relacionada"
-          : "Segmento mapeado no OpenStreetMap";
-
       return [{
         externalId,
         businessName,
-        niche: matchType === "related" ? rule?.resultNiche ?? params.niche : params.niche,
+        niche: rule?.resultNiche ?? params.niche,
         formattedAddress,
         phone,
         website,
         sourceUrl: `https://www.openstreetmap.org/${element.type}/${element.id}`,
         hasWebsite: Boolean(website),
-        matchType,
-        matchLabel,
-        relevance: (matchType === "name" ? 100 : matchType === "category" ? 70 : 30)
-          + 15
+        matchType: "name",
+        matchLabel: professionalTag ? "Nome e atuação profissional correspondem" : "Nome contém o termo pesquisado",
+        relevance: 115 + (professionalTag ? 20 : 0)
           + (formattedAddress !== location.label ? 5 : 0)
           - (/^acad[ae]mia da cidade/.test(normalize(businessName)) ? 25 : 0),
       }];

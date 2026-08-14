@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleAlert, ExternalLink, Loader2, MapPin, PhoneCall, Plus, Radar, ShieldCheck } from "lucide-react";
+import { ExternalLink, Loader2, MapPin, PhoneCall, Plus, Radar, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -42,8 +42,7 @@ export function LeadSearchForm() {
       const payload = (await response.json()) as { results?: LeadResult[]; error?: string };
       if (!response.ok) throw new Error(payload.error ?? "Não foi possível buscar oportunidades.");
       setResults(payload.results ?? []);
-      if (!payload.results?.length) toast.info("Nenhum resultado foi encontrado. Tente outra profissão, outro nome ou outra cidade.");
-      else if (payload.results.every((result) => result.matchType === "related")) toast.info("Encontramos locais relacionados. O OpenStreetMap pode não catalogar os profissionais individuais.");
+      if (!payload.results?.length) toast.info("Nenhum nome com esse termo e telefone público foi catalogado no OpenStreetMap para essa cidade.");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Não foi possível buscar oportunidades.");
     } finally { setSearching(false); }
@@ -51,7 +50,7 @@ export function LeadSearchForm() {
 
   return <div className="space-y-5">
     <form onSubmit={search} className="rounded-xl border border-border bg-surface">
-      <div className="border-b border-border p-5"><h2 className="text-sm font-semibold">Pesquisa livre de profissionais</h2><p className="mt-1 text-xs text-muted-foreground">Digite profissão, nome ou os dois: “personal”, “personal diego”, “nutricionista ana”.</p></div>
+      <div className="border-b border-border p-5"><h2 className="text-sm font-semibold">Pesquisa por nome de profissionais</h2><p className="mt-1 text-xs text-muted-foreground">Digite o termo que deve aparecer no nome: “personal”, “advogado”, “nutri” ou “diego personal”.</p></div>
       <div className="grid gap-5 p-5 md:grid-cols-2">
         <div><Label htmlFor="niche">O que deseja encontrar?</Label><Input name="niche" id="niche" list="lead-search-suggestions" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Ex.: personal diego" required /><datalist id="lead-search-suggestions">{LEAD_SEGMENTS.map((segment) => <option key={segment} value={segment} />)}</datalist></div>
         <div><Label htmlFor="location">Cidade</Label><div className="relative"><MapPin className="absolute left-3 top-3 size-4 text-subtle" /><Input name="location" id="location" value={location} onChange={(event) => setLocation(event.target.value)} className="pl-9" placeholder="Ex.: Recife ou Paulista" required /></div><p className="mt-1.5 text-[11px] text-subtle">Digite somente o nome da cidade; a UF não é obrigatória.</p></div>
@@ -62,9 +61,8 @@ export function LeadSearchForm() {
     </form>
 
     {lastSearch ? <section className="space-y-3" aria-live="polite"><div className="flex items-center justify-between gap-4"><h2 className="text-sm font-semibold">OpenStreetMap · {lastSearch.withoutWebsite ? "sem site informado" : "todos"} ({results.length})</h2><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer" className="text-right text-xs font-medium text-muted-foreground hover:text-foreground">© OpenStreetMap contributors</a></div>
-      {results.some((result) => result.matchType === "related") ? <div className="flex gap-3 rounded-lg border border-accent/20 bg-accent/[0.06] p-4"><CircleAlert className="mt-0.5 size-4 shrink-0 text-accent" /><p className="text-xs leading-5 text-muted-foreground">O OpenStreetMap não possui um catálogo completo de profissionais individuais. Por isso, a busca também mostra academias e estúdios relacionados, sempre identificados abaixo.</p></div> : null}
       {results.map((result) => <article key={result.externalId} className="rounded-xl border border-border bg-surface p-5"><div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start"><div><div className="flex flex-wrap items-center gap-2"><h3 className="font-medium">{result.businessName}</h3>{result.matchLabel ? <span className={`rounded-full border px-2 py-0.5 text-[10px] ${result.matchType === "related" ? "border-amber-500/25 bg-amber-500/[0.08] text-amber-300" : "border-accent/20 bg-accent/[0.08] text-accent"}`}>{result.matchLabel}</span> : null}</div><p className="mt-1 text-xs text-muted-foreground">{result.formattedAddress ?? "Endereço não informado"}</p>{result.phone ? <p className="mt-1 text-xs text-muted-foreground">+{result.phone} <span className="ml-1 text-emerald-400">· telefone público</span></p> : null}</div><div className="flex flex-wrap gap-2">{result.phone ? <Button asChild size="sm" variant="secondary"><a href={`tel:+${result.phone}`}><PhoneCall className="size-3.5" />Ligar</a></Button> : null}<Button asChild size="sm" variant="secondary"><a href={result.sourceUrl} target="_blank" rel="noreferrer"><ExternalLink className="size-3.5" />Ver origem</a></Button><Button asChild size="sm"><Link href={leadHref(result, lastSearch)}><Plus className="size-3.5" />Revisar e cadastrar</Link></Button></div></div><p className="mt-4 text-[11px] text-subtle">A origem informa um telefone, não um WhatsApp verificado. Por isso, o botão do WhatsApp não é exibido.</p></article>)}
-      {!results.length && !searching ? <div className="rounded-xl border border-dashed border-border p-8 text-center text-xs text-subtle">Nenhum profissional ou estabelecimento relacionado foi mapeado nessa cidade. Tente outra profissão, outro nome ou outra cidade.</div> : null}
+      {!results.length && !searching ? <div className="rounded-xl border border-dashed border-border p-8 text-center text-xs leading-5 text-subtle">Nenhum nome com esse termo e telefone público foi encontrado no OpenStreetMap para essa cidade. Isso não significa que o profissional não exista; apenas que ele não está catalogado nessa fonte.</div> : null}
     </section> : null}
   </div>;
 }

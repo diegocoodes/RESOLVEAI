@@ -19,7 +19,7 @@ export default async function EditLeadPage({ params }: { params: Promise<{ id: s
   const initialValues: Partial<LeadInput> = {
     name: lead.name || lead.businessName || "",
     businessName: lead.name || lead.businessName || "",
-    whatsapp: lead.whatsapp || lead.phone || "",
+    whatsapp: lead.whatsapp || "",
     niche: lead.niche || "",
     source: lead.source,
     contactAllowed: lead.contactAllowed,

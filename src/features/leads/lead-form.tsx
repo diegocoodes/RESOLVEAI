@@ -27,7 +27,7 @@ export function LeadForm({ initialValues = {}, leadId }: LeadFormProps) {
       ...initialValues,
       name: contactName,
       businessName: contactName,
-      whatsapp: initialValues.whatsapp || initialValues.phone || "",
+      whatsapp: initialValues.whatsapp || "",
     },
   });
 

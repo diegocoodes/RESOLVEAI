@@ -20,7 +20,7 @@ export async function getLeadsForUser(userId?: string): Promise<OpportunityLead[
   if (!userId || !process.env.DATABASE_URL) return [];
   const rows = await new LeadRepository().list(userId);
   const labels = { NO_WEBSITE: "Sem site", NEEDS_IMPROVEMENT: "Precisa melhorar", GOOD: "Bom site", UNKNOWN: "Não verificado" } as const;
-  return rows.map((lead) => { const whatsapp = normalizeWhatsAppNumber(lead.whatsapp ?? lead.phone); return { id: lead.id, name: lead.name ?? "Contato não informado", business: lead.businessName ?? lead.name ?? "Lead sem nome", segment: lead.niche ?? "Sem segmento", location: [lead.city, lead.state].filter(Boolean).join(", ") || "Não informada", state: lead.state ?? undefined, score: lead.score, status: lead.status, websiteStatus: labels[lead.websiteStatus], whatsapp: Boolean(whatsapp), instagram: Boolean(lead.instagram), whatsappValue: whatsapp, instagramValue: lead.instagram ?? undefined, phoneValue: lead.phone ?? undefined, nextFollowUp: lead.nextFollowUpAt?.toISOString() }; });
+  return rows.map((lead) => { const whatsapp = normalizeWhatsAppNumber(lead.whatsapp); return { id: lead.id, name: lead.name ?? "Contato não informado", business: lead.businessName ?? lead.name ?? "Lead sem nome", segment: lead.niche ?? "Sem segmento", location: [lead.city, lead.state].filter(Boolean).join(", ") || "Não informada", state: lead.state ?? undefined, score: lead.score, status: lead.status, websiteStatus: labels[lead.websiteStatus], whatsapp: Boolean(whatsapp), instagram: Boolean(lead.instagram), whatsappValue: whatsapp, instagramValue: lead.instagram ?? undefined, phoneValue: lead.phone ?? undefined, nextFollowUp: lead.nextFollowUpAt?.toISOString() }; });
 }
 
 export async function getLeadForUser(userId: string | undefined, id: string): Promise<OpportunityLead | undefined> {
@@ -28,6 +28,6 @@ export async function getLeadForUser(userId: string | undefined, id: string): Pr
   const lead = await new LeadRepository().findById(userId, id);
   if (!lead) return undefined;
   const labels = { NO_WEBSITE: "Sem site", NEEDS_IMPROVEMENT: "Precisa melhorar", GOOD: "Bom site", UNKNOWN: "Não verificado" } as const;
-  const whatsapp = normalizeWhatsAppNumber(lead.whatsapp ?? lead.phone);
+  const whatsapp = normalizeWhatsAppNumber(lead.whatsapp);
   return { id: lead.id, name: lead.name ?? "Contato não informado", business: lead.businessName ?? lead.name ?? "Lead sem nome", segment: lead.niche ?? "Sem segmento", location: [lead.city, lead.state].filter(Boolean).join(", ") || "Não informada", state: lead.state ?? undefined, score: lead.score, status: lead.status, websiteStatus: labels[lead.websiteStatus], whatsapp: Boolean(whatsapp), instagram: Boolean(lead.instagram), whatsappValue: whatsapp, instagramValue: lead.instagram ?? undefined, phoneValue: lead.phone ?? undefined, nextFollowUp: lead.nextFollowUpAt?.toISOString() };
 }

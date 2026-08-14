@@ -5,7 +5,13 @@ type NominatimLocation = {
   osm_id: number;
   display_name: string;
   boundingbox: [string, string, string, string];
-  address?: { country_code?: string };
+  address?: {
+    country_code?: string;
+    city?: string;
+    town?: string;
+    municipality?: string;
+    village?: string;
+  };
   type?: string;
 };
 
@@ -58,7 +64,11 @@ const SEGMENT_RULES: SegmentRule[] = [
 ];
 
 const POI_KEYS = ["amenity", "office", "shop", "craft", "leisure", "healthcare", "tourism"];
-const DEFAULT_OVERPASS_URLS = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
+const DEFAULT_OVERPASS_URLS = [
+  "https://overpass-api.de/api/interpreter",
+  "https://overpass.private.coffee/api/interpreter",
+  "https://overpass.kumi.systems/api/interpreter",
+];
 const USER_AGENT = "DiegoCodesWorkspace/1.1 (https://diegocodes.com.br/privacidade)";
 const MAX_BBOX_SPAN = 2.5;
 const OVERPASS_CACHE_TTL = 5 * 60 * 1_000;
@@ -104,17 +114,15 @@ function selector(conditions: TagCondition, scope: string) {
   return `nwr${Object.entries(conditions).map(([key, value]) => `[${quoteOverpass(key)}=${quoteOverpass(value)}]`).join("")}${scope};`;
 }
 
-export function buildOverpassQuery(niche: string, bbox: [number, number, number, number], relationId?: number) {
+export function buildOverpassQuery(niche: string, bbox: [number, number, number, number]) {
   const rule = findSegmentRule(niche);
   const namePattern = phraseRegex(niche);
-  const scope = relationId ? "(area.searchArea)" : "";
+  const scope = "";
   const selectors = rule?.filters.map((filter) => selector(filter.conditions, scope)) ?? [];
 
   if (!rule && namePattern) selectors.push(`nwr["name"~${quoteOverpass(namePattern)},i]${scope};`);
 
-  const area = relationId ? `area(${3_600_000_000 + relationId})->.searchArea;` : "";
-  const bounds = relationId ? "" : `[bbox:${bbox.join(",")}]`;
-  return `[out:json][timeout:25]${bounds};${area}(${selectors.join("")});out center tags 200;`;
+  return `[out:json][timeout:25][bbox:${bbox.join(",")}];(${selectors.join("")});out center tags 200;`;
 }
 
 function tag(tags: Record<string, string>, ...names: string[]) {
@@ -142,10 +150,16 @@ function formatAddress(tags: Record<string, string>, locationLabel: string) {
   return parts.length ? [...new Set(parts)].join(", ") : locationLabel;
 }
 
-function locationScore(place: NominatimLocation) {
-  if (place.osm_type === "relation" && place.type === "administrative") return 3;
-  if (["city", "town", "municipality"].includes(place.type ?? "")) return 2;
-  return 1;
+function locationScore(place: NominatimLocation, searchedCity: string) {
+  const address = place.address;
+  const cityNames = [address?.city, address?.town, address?.municipality, address?.village, place.display_name.split(",")[0]].filter(Boolean);
+  const exactCity = cityNames.some((name) => normalize(name ?? "") === normalize(searchedCity));
+  const locationType = place.osm_type === "relation" && place.type === "administrative"
+    ? 3
+    : ["city", "town", "municipality"].includes(place.type ?? "")
+      ? 2
+      : 1;
+  return (exactCity ? 10 : 0) + locationType;
 }
 
 function parseLocation(value: string) {
@@ -195,7 +209,7 @@ export class OpenStreetMapProvider implements LeadProvider {
     if (!response.ok) throw new OpenStreetMapSearchError("NOMINATIM_FAILED");
     const places = ((await response.json()) as NominatimLocation[])
       .filter((place) => place.address?.country_code === "br" && place.boundingbox?.length === 4)
-      .sort((a, b) => locationScore(b) - locationScore(a));
+      .sort((a, b) => locationScore(b, parsedLocation.city) - locationScore(a, parsedLocation.city));
     const place = places[0];
     if (!place) throw new OpenStreetMapSearchError("LOCATION_NOT_FOUND");
 
@@ -203,12 +217,12 @@ export class OpenStreetMapProvider implements LeadProvider {
     const bbox: [number, number, number, number] = [south, west, north, east];
     if (bbox.some((coordinate) => !Number.isFinite(coordinate))) throw new OpenStreetMapSearchError("LOCATION_NOT_FOUND");
     if (bbox[2] - bbox[0] > MAX_BBOX_SPAN || bbox[3] - bbox[1] > MAX_BBOX_SPAN) throw new OpenStreetMapSearchError("LOCATION_TOO_BROAD");
-    return { bbox, label: place.display_name, relationId: place.osm_type === "relation" ? place.osm_id : undefined };
+    return { bbox, label: place.display_name };
   }
 
   async search(params: LeadSearchParams): Promise<LeadResult[]> {
     const location = await this.geocode(params.location);
-    const query = buildOverpassQuery(params.niche, location.bbox, location.relationId);
+    const query = buildOverpassQuery(params.niche, location.bbox);
     const cached = overpassCache.get(query);
     let elements = cached && cached.expiresAt > Date.now() ? cached.elements : undefined;
     for (const url of elements ? [] : this.overpassBaseUrls) {

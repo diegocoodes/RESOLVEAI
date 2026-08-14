@@ -16,8 +16,8 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("openstreetmap.search.failed", error);
     if (error instanceof OpenStreetMapSearchError) {
-      if (error.code === "LOCATION_NOT_FOUND") return NextResponse.json({ error: "Não encontramos essa localização. Tente informar cidade e UF, por exemplo: Recife - PE." }, { status: 422 });
-      if (error.code === "LOCATION_TOO_BROAD") return NextResponse.json({ error: "A localização está muito ampla. Informe uma cidade e a UF para limitar a busca." }, { status: 422 });
+      if (error.code === "LOCATION_NOT_FOUND") return NextResponse.json({ error: "Não encontramos essa cidade. Confira o nome e tente novamente." }, { status: 422 });
+      if (error.code === "LOCATION_TOO_BROAD") return NextResponse.json({ error: "Não foi possível delimitar essa cidade. Informe o nome completo do município." }, { status: 422 });
     }
     return NextResponse.json({ error: "O OpenStreetMap não concluiu a busca agora. Aguarde um instante e tente novamente." }, { status: 502 });
   }

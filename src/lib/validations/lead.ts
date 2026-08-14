@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isValidBrazilianWhatsAppNumber } from "@/lib/whatsapp";
 
 const optionalUrl = z.string().trim().url("Informe uma URL válida").optional().or(z.literal(""));
 
@@ -9,7 +10,7 @@ export const leadInputSchema = z.object({
   city: z.string().trim().max(100).optional().or(z.literal("")),
   state: z.string().trim().max(2).optional().or(z.literal("")),
   phone: z.string().trim().max(30).optional().or(z.literal("")),
-  whatsapp: z.string().trim().min(8, "Informe o número do WhatsApp com DDD").max(30),
+  whatsapp: z.string().trim().min(8, "Informe o número do WhatsApp com DDD").max(30).refine(isValidBrazilianWhatsAppNumber, "Informe um número brasileiro válido com DDD"),
   instagram: z.string().trim().max(120).optional().or(z.literal("")),
   facebook: optionalUrl,
   website: optionalUrl,

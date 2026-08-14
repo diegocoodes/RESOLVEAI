@@ -35,5 +35,5 @@ export function buildOutreachMessage(facts: LeadFacts) {
     : facts.websiteStatus === "NEEDS_IMPROVEMENT"
       ? " e identifiquei alguns pontos que podem melhorar a experiência do site."
       : ".";
-  return `${greeting}${context}${local}${observation} Trabalho com criação de experiências web claras e profissionais. Você tem interesse em conversar sobre a presença digital do seu negócio?`;
+  return `${greeting}${context}${local}${observation} Crio sites profissionais e estou entrando em contato para oferecer um site para sua empresa, pensado para apresentar seus serviços e facilitar o contato de novos clientes. Podemos conversar?`;
 }

@@ -1,4 +1,5 @@
 import type { LeadProvider, LeadResult, LeadSearchParams } from "@/services/lead-provider";
+import { normalizeWhatsAppNumber } from "@/lib/whatsapp";
 
 type NominatimLocation = {
   osm_type: "node" | "way" | "relation";
@@ -261,6 +262,8 @@ export class OpenStreetMapProvider implements LeadProvider {
 
       const website = tag(tags, "website", "contact:website", "url");
       if (params.withoutWebsite && website) return [];
+      const phone = normalizeWhatsAppNumber(tag(tags, "phone", "contact:phone", "mobile", "contact:mobile"));
+      if (!phone) return [];
       const externalId = `osm:${element.type}:${element.id}`;
       const formattedAddress = formatAddress(tags, location.label);
       const signature = `${normalize(businessName)}|${normalize(formattedAddress)}`;
@@ -280,14 +283,14 @@ export class OpenStreetMapProvider implements LeadProvider {
         businessName,
         niche: matchType === "related" ? rule?.resultNiche ?? params.niche : params.niche,
         formattedAddress,
-        phone: tag(tags, "phone", "contact:phone", "mobile", "contact:mobile"),
+        phone,
         website,
         sourceUrl: `https://www.openstreetmap.org/${element.type}/${element.id}`,
         hasWebsite: Boolean(website),
         matchType,
         matchLabel,
         relevance: (matchType === "name" ? 100 : matchType === "category" ? 70 : 30)
-          + (tag(tags, "phone", "contact:phone", "mobile", "contact:mobile") ? 15 : 0)
+          + 15
           + (formattedAddress !== location.label ? 5 : 0)
           - (/^acad[ae]mia da cidade/.test(normalize(businessName)) ? 25 : 0),
       }];

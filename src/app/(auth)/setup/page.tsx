@@ -1,12 +1,14 @@
 import { Check, CircleAlert, Database, KeyRound, ServerCog, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getServerConfiguration } from "@/lib/server-config";
+import { redirect } from "next/navigation";
 
 export const metadata = { title: "Configurar servidor" };
 export const dynamic = "force-dynamic";
 
 export default function SetupPage() {
   const configuration = getServerConfiguration();
+  if (configuration.ready) redirect("/dashboard");
 
   return (
     <main className="min-h-screen bg-background px-4 py-12 sm:py-20">

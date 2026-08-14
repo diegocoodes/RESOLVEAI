@@ -9,8 +9,9 @@ MVP full-stack para centralizar oportunidades de emprego e prospecção comercia
 - Currículo Mestre importado de uma fonte verificada e versões personalizadas que podem ser baixadas ou excluídas.
 - Validação ATS interna separa formato técnico da cobertura de palavras-chave comprovadas para cada vaga.
 - Download de PDF ATS em coluna única, limpo, selecionável e rastreável até os fatos de origem.
-- Leads: cadastro simplificado, edição, WhatsApp direto, origem, score, duplicidade, exportação, exclusão e bloqueio de contato.
-- Prospecção por texto livre (`personal`, `personal diego`, profissão ou nome), com geocodificação via Nominatim, busca de POIs por segmento via Overpass e atalhos manuais para Google, Google Maps e Instagram.
+- Leads: cadastro simplificado, edição, WhatsApp direto quando informado, telefone, endereço, origem, score, duplicidade, exportação, exclusão e bloqueio de contato.
+- Importação de leads por XML com prévia, validação obrigatória de nome, endereço, telefone e segmento, padronização de segmentos e separação de duplicados e registros rejeitados.
+- Listagem de leads organizada por segmento e paginada em grupos de cinco contatos.
 - Pipeline Kanban, campanhas, clientes, histórico e análises alimentados somente por registros persistidos.
 - Pesquisa de módulos, drawer mobile, estados de loading/empty/error e feedback por toast.
 
@@ -72,11 +73,7 @@ AUTH_SECRET=<segredo aleatório com pelo menos 32 caracteres>
 OPENAI_API_KEY=<chave server-side da OpenAI>
 OPENAI_MODEL=gpt-5.4-nano
 AI_PROVIDER=openai
-NOMINATIM_BASE_URL=https://nominatim.openstreetmap.org
-OVERPASS_BASE_URL=https://overpass-api.de/api/interpreter
 ```
-
-O Nominatim é usado somente para localizar a cidade; os estabelecimentos são consultados por categoria no Overpass. As instâncias públicas são apropriadas para buscas manuais e leves: a aplicação respeita o limite do Nominatim, identifica o cliente e não executa coleta em massa. Para escalar, configure `NOMINATIM_BASE_URL` e `OVERPASS_BASE_URL` com instâncias próprias.
 
 Gere `AUTH_SECRET` com `npm exec auth secret`. Não configure `AUTH_URL` na Vercel: o Auth.js deriva corretamente as URLs de Production e Preview. `AUTH_TRUST_HOST` também é inferido pela plataforma.
 

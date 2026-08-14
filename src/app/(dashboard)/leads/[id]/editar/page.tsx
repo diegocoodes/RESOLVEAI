@@ -19,6 +19,8 @@ export default async function EditLeadPage({ params }: { params: Promise<{ id: s
   const initialValues: Partial<LeadInput> = {
     name: lead.name || lead.businessName || "",
     businessName: lead.name || lead.businessName || "",
+    address: lead.address || "",
+    phone: lead.phone || "",
     whatsapp: lead.whatsapp || "",
     niche: lead.niche || "",
     source: lead.source,
@@ -27,7 +29,7 @@ export default async function EditLeadPage({ params }: { params: Promise<{ id: s
 
   return <div className="mx-auto max-w-3xl space-y-6">
     <Link href={`/leads/${id}`} className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"><ChevronLeft className="size-3.5" />Voltar para o lead</Link>
-    <PageHeader eyebrow="Lead" title="Editar lead" description="Atualize o contato, o WhatsApp ou o segmento." />
+    <PageHeader eyebrow="Lead" title="Editar lead" description="Atualize o contato, endereço, telefone, WhatsApp ou segmento." />
     <LeadForm leadId={id} initialValues={initialValues} />
   </div>;
 }

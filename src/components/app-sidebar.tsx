@@ -8,12 +8,12 @@ import {
   AtSign,
   ChevronRight,
   FileText,
+  FileUp,
   History,
   Globe2,
   LayoutDashboard,
   MessagesSquare,
   Network,
-  Radar,
   Send,
   Settings2,
   Sparkles,
@@ -39,7 +39,7 @@ const navGroups: NavGroup[] = [
   {
     label: "Prospecção",
     items: [
-      { label: "Buscar leads", href: "/prospeccao", icon: Radar },
+      { label: "Importar XML", href: "/prospeccao", icon: FileUp },
       { label: "Leads", href: "/leads", icon: UsersRound },
       { label: "Campanhas", href: "/campanhas", icon: Send },
       { label: "Mensagens", href: "/mensagens", icon: MessagesSquare },

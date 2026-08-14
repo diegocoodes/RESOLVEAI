@@ -369,6 +369,7 @@ model Lead {
   name          String?
   businessName  String?
   niche         String?
+  address       String?
   city          String?
   state         String?
   phone         String?

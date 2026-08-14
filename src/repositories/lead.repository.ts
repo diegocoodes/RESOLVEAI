@@ -29,7 +29,7 @@ export class LeadRepository {
     if (duplicate) throw new DuplicateLeadError("Possível lead duplicado.");
     const score = new LeadScoringService().calculate({ websiteStatus: audit.status, hasWhatsapp: Boolean(input.whatsapp), hasInstagram: Boolean(input.instagram), localBusiness: Boolean(input.city) });
     return prisma.lead.create({ data: {
-      userId, name: input.name || null, businessName: input.businessName, niche: input.niche, city: input.city || null, state: input.state?.toUpperCase() || null,
+      userId, name: input.name || null, businessName: input.businessName, niche: input.niche, address: input.address || null, city: input.city || null, state: input.state?.toUpperCase() || null,
       phone: input.phone || null, whatsapp: input.whatsapp || null, instagram: input.instagram || null, facebook: input.facebook || null,
       website: input.website || null, googleBusiness: input.googleBusiness || null, websiteStatus: audit.status, score: score.score,
       source: input.source, sourceUrl: input.sourceUrl || null, notes: input.notes || null, contactAllowed: input.contactAllowed, duplicateKey: domain,
@@ -44,11 +44,13 @@ export class LeadRepository {
       const current = await transaction.lead.findFirst({ where: { id, userId } });
       if (!current) return null;
 
+      const phone = normalize(input.phone);
       const whatsapp = normalize(input.whatsapp);
       const duplicate = await transaction.lead.findFirst({ where: {
         userId,
         id: { not: id },
         OR: [
+          ...(phone ? [{ phone: { contains: phone } }] : []),
           ...(whatsapp ? [{ whatsapp: { contains: whatsapp } }] : []),
           { businessName: { equals: input.name, mode: "insensitive" } },
         ],
@@ -57,7 +59,7 @@ export class LeadRepository {
 
       const score = new LeadScoringService().calculate({
         websiteStatus: current.websiteStatus,
-        hasWhatsapp: true,
+        hasWhatsapp: Boolean(whatsapp),
         hasInstagram: Boolean(current.instagram),
         localBusiness: Boolean(current.city),
       });
@@ -67,9 +69,11 @@ export class LeadRepository {
           name: input.name,
           businessName: input.name,
           niche: input.niche,
-          whatsapp: input.whatsapp,
+          address: input.address || null,
+          phone: input.phone || null,
+          whatsapp: input.whatsapp || null,
           score: score.score,
-          activities: { create: { type: "LEAD_UPDATED", title: "Lead atualizado", metadata: { fields: ["name", "whatsapp", "niche"] } } },
+          activities: { create: { type: "LEAD_UPDATED", title: "Lead atualizado", metadata: { fields: ["name", "address", "phone", "whatsapp", "niche"] } } },
         },
         select: { id: true },
       });

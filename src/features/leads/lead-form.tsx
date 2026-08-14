@@ -19,6 +19,7 @@ type LeadFormProps = {
 export function LeadForm({ initialValues = {}, leadId }: LeadFormProps) {
   const router = useRouter();
   const contactName = initialValues.name || initialValues.businessName || "";
+  const whatsappRequired = !leadId || initialValues.source === "MANUAL";
   const { register, setValue, handleSubmit, formState: { errors, isSubmitting } } = useForm<LeadInput>({
     resolver: zodResolver(leadInputSchema),
     defaultValues: {
@@ -36,7 +37,7 @@ export function LeadForm({ initialValues = {}, leadId }: LeadFormProps) {
       method: leadId ? "PATCH" : "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(leadId
-        ? { name: values.name, whatsapp: values.whatsapp, niche: values.niche }
+        ? { name: values.name, address: values.address, phone: values.phone, whatsapp: values.whatsapp, niche: values.niche }
         : { ...values, businessName: values.name }),
     });
     const result = (await response.json()) as { id?: string; error?: string; duplicate?: boolean };
@@ -76,7 +77,7 @@ export function LeadForm({ initialValues = {}, leadId }: LeadFormProps) {
             {error("name")}
           </div>
           <div>
-            <Label htmlFor="whatsapp">Número do WhatsApp *</Label>
+            <Label htmlFor="whatsapp">Número do WhatsApp{whatsappRequired ? " *" : ""}</Label>
             <Input id="whatsapp" type="tel" inputMode="tel" autoComplete="tel" placeholder="Ex.: 5581999999999" {...register("whatsapp")} />
             {error("whatsapp")}
           </div>
@@ -86,6 +87,18 @@ export function LeadForm({ initialValues = {}, leadId }: LeadFormProps) {
             <datalist id="lead-form-segments">{LEAD_SEGMENTS.map((segment) => <option key={segment} value={segment} />)}</datalist>
             {error("niche")}
           </div>
+          {leadId ? <>
+            <div>
+              <Label htmlFor="phone">Telefone</Label>
+              <Input id="phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="Ex.: 558133334444" {...register("phone")} />
+              {error("phone")}
+            </div>
+            <div>
+              <Label htmlFor="address">Endereço</Label>
+              <Input id="address" autoComplete="street-address" placeholder="Ex.: Rua do Sol, 100, Recife" {...register("address")} />
+              {error("address")}
+            </div>
+          </> : null}
         </div>
       </section>
 

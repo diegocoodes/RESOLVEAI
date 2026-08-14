@@ -10,7 +10,7 @@ const BRAZIL_AREA_CODES = new Set([
   "91", "92", "93", "94", "95", "96", "97", "98", "99",
 ]);
 
-export function normalizeWhatsAppNumber(raw?: string | null) {
+export function normalizeBrazilianPhoneNumber(raw?: string | null) {
   const firstNumber = raw?.split(/[;,/]/)[0];
   let digits = firstNumber?.replace(/\D/g, "") ?? "";
   if (!digits) return undefined;
@@ -29,6 +29,10 @@ export function normalizeWhatsAppNumber(raw?: string | null) {
   if (/^(\d)\1+$/.test(subscriber)) return undefined;
 
   return `55${digits}`;
+}
+
+export function normalizeWhatsAppNumber(raw?: string | null) {
+  return normalizeBrazilianPhoneNumber(raw);
 }
 
 export function isValidBrazilianWhatsAppNumber(raw?: string | null) {

@@ -1,4 +1,4 @@
-export const APP_NAME = "Opportunity OS";
+export const APP_NAME = "diegocodes.com.br";
 
 export const JOB_STATUSES = [
   { value: "SAVED", label: "Salva" },

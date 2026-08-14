@@ -3,13 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  BarChart3,
   BriefcaseBusiness,
   Building2,
+  AtSign,
   ChevronRight,
-  FileClock,
   FileText,
   History,
+  Globe2,
   LayoutDashboard,
   MessagesSquare,
   Network,
@@ -34,7 +34,6 @@ const navGroups: NavGroup[] = [
     items: [
       { label: "Vagas", href: "/vagas", icon: BriefcaseBusiness },
       { label: "Currículos", href: "/curriculos", icon: FileText },
-      { label: "Candidaturas", href: "/candidaturas", icon: FileClock },
     ],
   },
   {
@@ -73,10 +72,10 @@ export function AppSidebar({ onNavigate }: { onNavigate?: () => void }) {
     <div className="flex h-full flex-col bg-surface">
       <div className="flex h-[68px] items-center border-b border-border px-5">
         <Link href="/dashboard" className="flex items-center gap-3" onClick={onNavigate}>
-          <span className="grid size-8 place-items-center rounded-lg bg-accent text-xs font-bold text-accent-foreground">OS</span>
+          <span className="grid size-8 place-items-center rounded-lg bg-accent text-xs font-bold text-accent-foreground">DC</span>
           <span>
-            <span className="block text-sm font-semibold leading-4 tracking-tight">Opportunity OS</span>
-            <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-subtle">Workspace pessoal</span>
+            <span className="block text-sm font-semibold leading-4 tracking-tight">diegocodes.com.br</span>
+            <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-subtle">Workspace Diego Codes</span>
           </span>
         </Link>
       </div>
@@ -114,17 +113,9 @@ export function AppSidebar({ onNavigate }: { onNavigate?: () => void }) {
         ))}
       </nav>
 
-      <div className="border-t border-border p-3">
-        <div className="rounded-lg border border-border bg-background p-3">
-          <div className="flex items-center gap-2 text-xs font-medium text-foreground">
-            <BarChart3 className="size-3.5 text-accent" />
-            Progresso do mês
-          </div>
-          <div className="mt-3 h-1.5 rounded-full bg-border">
-            <div className="h-full w-[68%] rounded-full bg-accent" />
-          </div>
-          <p className="mt-2 text-[11px] text-subtle">34 de 50 oportunidades analisadas</p>
-        </div>
+      <div className="space-y-1 border-t border-border p-3">
+        <a href="https://diegocodes.com.br" target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs text-muted-foreground hover:bg-surface-hover hover:text-foreground"><Globe2 className="size-3.5 text-accent" />diegocodes.com.br</a>
+        <a href="https://www.instagram.com/diegocodes_/" target="_blank" rel="noreferrer" className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs text-muted-foreground hover:bg-surface-hover hover:text-foreground"><AtSign className="size-3.5 text-accent" />@diegocodes_</a>
       </div>
     </div>
   );

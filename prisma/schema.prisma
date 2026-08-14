@@ -95,6 +95,7 @@ enum MatchLevel {
 
 enum LeadActivityType {
   LEAD_CREATED
+  LEAD_UPDATED
   LEAD_ANALYZED
   MESSAGE_GENERATED
   MESSAGE_APPROVED

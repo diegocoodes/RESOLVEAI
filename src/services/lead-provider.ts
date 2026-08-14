@@ -9,6 +9,8 @@ export type LeadResult = {
   sourceUrl: string;
   businessStatus?: string;
   hasWebsite: boolean;
+  matchType?: "name" | "category" | "related";
+  matchLabel?: string;
 };
 
 export interface LeadProvider {

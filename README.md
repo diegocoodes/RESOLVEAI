@@ -1,4 +1,4 @@
-# Opportunity OS
+# diegocodes.com.br Workspace
 
 MVP full-stack para centralizar oportunidades de emprego e prospecção comercial. A interface é responsiva, o banco é PostgreSQL via Prisma, a autenticação usa Auth.js e todos os formulários de entrada passam por Zod.
 
@@ -6,12 +6,11 @@ MVP full-stack para centralizar oportunidades de emprego e prospecção comercia
 
 - Dashboard com contagens e registros reais do workspace, sem métricas fictícias.
 - Vagas: cadastro persistente, extração estruturada com OpenAI e fallback determinístico, duplicidade, detalhe e comparação por evidências.
-- Currículo Mestre importado de uma fonte verificada e versões personalizadas com regra estrita de não inventar fatos.
+- Currículo Mestre importado de uma fonte verificada e versões personalizadas que podem ser baixadas ou excluídas.
 - Validação ATS interna separa formato técnico da cobertura de palavras-chave comprovadas para cada vaga.
 - Download de PDF ATS em coluna única, limpo, selecionável e rastreável até os fatos de origem.
-- Candidaturas exibidas a partir do banco, sem processos fictícios.
-- Leads: cadastro, origem, auditoria conservadora, score configurável, duplicidade, exportação, exclusão e bloqueio de contato.
-- Prospecção por texto livre (`personal`, `personal diego`, profissão ou nome), com resultados internos do OpenStreetMap e atalhos manuais para Google, Google Maps e Instagram.
+- Leads: cadastro simplificado, edição, WhatsApp direto, origem, score, duplicidade, exportação, exclusão e bloqueio de contato.
+- Prospecção por texto livre (`personal`, `personal diego`, profissão ou nome), com geocodificação via Nominatim, busca de POIs por segmento via Overpass e atalhos manuais para Google, Google Maps e Instagram.
 - Pipeline Kanban, campanhas, clientes, histórico e análises alimentados somente por registros persistidos.
 - Pesquisa de módulos, drawer mobile, estados de loading/empty/error e feedback por toast.
 
@@ -74,13 +73,14 @@ OPENAI_API_KEY=<chave server-side da OpenAI>
 OPENAI_MODEL=gpt-5.4-nano
 AI_PROVIDER=openai
 NOMINATIM_BASE_URL=https://nominatim.openstreetmap.org
+OVERPASS_BASE_URL=https://overpass-api.de/api/interpreter
 ```
 
-O Nominatim público é apropriado para buscas manuais e leves: a aplicação respeita o limite de uma requisição por segundo, identifica o cliente, mantém cache e não executa coleta em massa. Para escalar, configure `NOMINATIM_BASE_URL` com uma instância própria.
+O Nominatim é usado somente para localizar a cidade; os estabelecimentos são consultados por categoria no Overpass. As instâncias públicas são apropriadas para buscas manuais e leves: a aplicação respeita o limite do Nominatim, identifica o cliente e não executa coleta em massa. Para escalar, configure `NOMINATIM_BASE_URL` e `OVERPASS_BASE_URL` com instâncias próprias.
 
 Gere `AUTH_SECRET` com `npm exec auth secret`. Não configure `AUTH_URL` na Vercel: o Auth.js deriva corretamente as URLs de Production e Preview. `AUTH_TRUST_HOST` também é inferido pela plataforma.
 
-As migrations não rodam durante o build para impedir que uma Preview altere o banco principal. Aplique-as de um ambiente seguro antes do primeiro deploy:
+Somente o build de Production executa `prisma migrate deploy`, antes do `next build`. Builds de Preview ignoram essa etapa para não alterar o banco principal. Para aplicar migrations manualmente em um ambiente seguro, use:
 
 ```bash
 npm run db:deploy

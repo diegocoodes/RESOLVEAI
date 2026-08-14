@@ -15,7 +15,7 @@ export default function SetupPage() {
       <div className="mx-auto max-w-2xl">
         <span className="grid size-10 place-items-center rounded-lg bg-accent text-sm font-bold text-accent-foreground">OS</span>
         <p className="mt-8 text-xs font-semibold uppercase tracking-[0.16em] text-accent">Configuração necessária</p>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">Conecte o Opportunity OS ao Prisma</h1>
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">Conecte o diegocodes.com.br ao Prisma</h1>
         <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">
           O servidor está online, mas faltam variáveis protegidas. Adicione-as ao ambiente de hospedagem e faça um novo deploy. Nenhum segredo deve ser salvo no Git.
         </p>

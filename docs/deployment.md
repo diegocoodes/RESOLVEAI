@@ -4,7 +4,7 @@
 
 O Auth.js exige `AUTH_SECRET` para criptografar JWTs e cookies. O login por credenciais também depende de `DATABASE_URL`, pois usuários e hashes de senha são consultados pelo Prisma. Se uma dessas variáveis estiver ausente, o servidor não consegue concluir o fluxo de autenticação.
 
-O Opportunity OS agora intercepta esse estado e mostra `/setup`. O endpoint `/api/health` retorna apenas estados (`configured`, `connected`, `unavailable`) e nunca retorna segredos.
+O workspace diegocodes.com.br intercepta esse estado e mostra `/setup`. O endpoint `/api/health` retorna apenas estados (`configured`, `connected`, `unavailable`) e nunca retorna segredos.
 
 ## Prisma Postgres + Vercel
 
@@ -25,9 +25,10 @@ OPENAI_API_KEY=<chave server-side da OpenAI>
 OPENAI_MODEL=gpt-5.4-nano
 AI_PROVIDER=openai
 NOMINATIM_BASE_URL=https://nominatim.openstreetmap.org
+OVERPASS_BASE_URL=https://overpass-api.de/api/interpreter
 ```
 
-`NOMINATIM_BASE_URL` é opcional. O padrão público funciona sem chave para uso manual e leve; uma instância própria é necessária para volume maior.
+`NOMINATIM_BASE_URL` e `OVERPASS_BASE_URL` são opcionais. Os padrões públicos funcionam sem chave para uso manual e leve; instâncias próprias são necessárias para volume maior.
 
 Não copie o `AUTH_URL` do Prisma Compute para a Vercel. O Auth.js reconhece a plataforma e deriva o domínio correto, inclusive nas Previews. `AUTH_TRUST_HOST` é opcional na Vercel; se configurado, use `true`.
 
@@ -35,7 +36,7 @@ Não compartilhe o banco de produção com Preview. Conecte um banco separado pa
 
 ### Migrations e conta inicial
 
-O build da Vercel executa `prisma generate` e `next build`, mas deliberadamente não executa migrations. Antes de publicar uma mudança de schema, carregue as variáveis do ambiente seguro e rode:
+O build de Production da Vercel executa `prisma generate`, `prisma migrate deploy` e `next build`, nessa ordem. Builds de Preview ignoram as migrations para não alterar o banco principal. Para executar o mesmo deploy de schema manualmente em um ambiente seguro, rode:
 
 ```bash
 npm run db:deploy

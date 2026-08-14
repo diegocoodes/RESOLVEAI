@@ -1,11 +1,13 @@
 "use client";
 
-import { Check, Copy, ExternalLink, Loader2, MessageCircle, Sparkles } from "lucide-react";
+import { Check, Copy, ExternalLink, Loader2, MessageCircle, Pencil, Sparkles } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { createWhatsAppUrl } from "@/lib/whatsapp";
 
-export function LeadActions({ whatsapp, message }: { leadId: string; whatsapp?: string; message: string }) {
+export function LeadActions({ leadId, whatsapp, message }: { leadId: string; whatsapp?: string; message: string }) {
   const [working, setWorking] = useState<string | null>(null);
   async function simulate(action: string, success: string) {
     setWorking(action);
@@ -13,9 +15,10 @@ export function LeadActions({ whatsapp, message }: { leadId: string; whatsapp?: 
     setWorking(null);
     toast.success(success);
   }
-  const waUrl = whatsapp ? `https://wa.me/${whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(message)}` : undefined;
+  const waUrl = createWhatsAppUrl(whatsapp, message);
   return (
     <div className="flex flex-wrap gap-2">
+      <Button asChild variant="secondary"><Link href={`/leads/${leadId}/editar`}><Pencil className="size-4" />Editar lead</Link></Button>
       <Button variant="secondary" onClick={() => simulate("analyze", "Análise concluída e registrada no histórico.")} disabled={!!working}>{working === "analyze" ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}Analisar oportunidade</Button>
       <Button variant="secondary" onClick={() => simulate("approve", "Mensagem aprovada para contato manual.")} disabled={!!working}>{working === "approve" ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />}Aprovar mensagem</Button>
       {waUrl ? <Button asChild><a href={waUrl} target="_blank" rel="noreferrer" onClick={() => toast.info("WhatsApp aberto. Confirme o envio manualmente.")}><MessageCircle className="size-4" />Abrir no WhatsApp<ExternalLink className="size-3" /></a></Button> : <Button disabled><MessageCircle className="size-4" />WhatsApp indisponível</Button>}

@@ -17,7 +17,7 @@ export class WebsiteAuditService {
     try { url = new URL(rawUrl); } catch { return { status: "UNKNOWN", note: "URL inválida; não foi possível verificar." }; }
     const startedAt = performance.now();
     try {
-      const response = await fetch(url, { signal: AbortSignal.timeout(8_000), redirect: "follow", headers: { "User-Agent": "OpportunityOS-WebsiteAudit/1.0" } });
+      const response = await fetch(url, { signal: AbortSignal.timeout(8_000), redirect: "follow", headers: { "User-Agent": "DiegoCodes-WebsiteAudit/1.0" } });
       const html = (await response.text()).slice(0, 500_000);
       const responseTimeMs = Math.round(performance.now() - startedAt);
       const title = html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1]?.trim();

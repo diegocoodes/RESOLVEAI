@@ -4,10 +4,10 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Opportunity OS",
-    template: "%s · Opportunity OS",
+    default: "diegocodes.com.br",
+    template: "%s · diegocodes.com.br",
   },
-  description: "Sistema pessoal para vagas, currículos e prospecção comercial.",
+  description: "Workspace Diego Codes para vagas, currículos e prospecção comercial.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

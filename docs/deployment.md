@@ -11,10 +11,11 @@ O Opportunity OS agora intercepta esse estado e mostra `/setup`. O endpoint `/ap
 1. Crie uma instância Prisma Postgres pelo Marketplace da Vercel ou no Prisma Data Platform.
 2. Vincule-a ao projeto para criar `DATABASE_URL`.
 3. Adicione `AUTH_SECRET` em Production, Preview e Development.
-4. Gere o segredo com `npm exec auth secret`.
-5. Faça o deploy do commit.
-6. Em um ambiente seguro com as mesmas variáveis, execute `npm run db:deploy`.
-7. Execute `npm run db:seed` somente quando quiser criar a conta de demonstração.
+4. No Prisma Compute, defina `AUTH_URL` com a URL pública terminada em `.prisma.build`.
+5. Gere o segredo com `npm exec auth secret`.
+6. Faça o deploy do commit.
+7. Em um ambiente seguro com as mesmas variáveis, execute `npm run db:deploy`.
+8. Execute `npm run db:seed` somente quando quiser criar a conta de demonstração.
 
 Para produção real, remova ou troque a senha do usuário demo depois do primeiro acesso.
 

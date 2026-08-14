@@ -68,6 +68,7 @@ Configure no provedor de hospedagem, sem adicionar os valores ao Git:
 DATABASE_URL=postgres://...?...sslmode=require
 AUTH_SECRET=<segredo aleatório com pelo menos 32 caracteres>
 AUTH_TRUST_HOST=true
+AUTH_URL=https://seu-app.prisma.build
 ```
 
 Gere o segredo com `npm exec auth secret`. Em Vercel, `AUTH_TRUST_HOST` é inferido, mas mantê-lo explicitamente como `true` ajuda em outros proxies. Configure as variáveis nos ambientes de Production, Preview e Development, faça um novo deploy e aplique a migration:
@@ -77,7 +78,7 @@ npm run db:deploy
 npm run db:seed
 ```
 
-O endpoint `GET /api/health` confirma, sem expor credenciais, se o Auth.js está configurado e se o PostgreSQL responde.
+No Prisma Compute, `AUTH_URL` deve apontar para o endpoint público do app para impedir callbacks para o endereço interno do container. O endpoint `GET /api/health` confirma, sem expor credenciais, se o Auth.js está configurado e se o PostgreSQL responde.
 
 ## Segurança e privacidade
 

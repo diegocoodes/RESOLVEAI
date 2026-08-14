@@ -4,6 +4,10 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getServerConfiguration } from "@/lib/server-config";
 
+// Prisma Compute injects project env vars at runtime. Never prerender an auth/
+// database-protected route while those values are unavailable to the build.
+export const dynamic = "force-dynamic";
+
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   if (!getServerConfiguration().ready) redirect("/setup");
   const session = await auth();

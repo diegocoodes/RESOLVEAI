@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AtSign, Check, ChevronLeft, ChevronRight, CircleAlert, Globe2, Loader2, MessageCircle, Pencil, PhoneCall, Search, Trash2 } from "lucide-react";
+import { AtSign, Check, ChevronLeft, ChevronRight, CircleAlert, Globe2, Loader2, MessageCircle, Pencil, Search, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -44,10 +44,8 @@ export function LeadsTable({ leads }: { leads: OpportunityLead[] }) {
 
   function Actions({ lead }: { lead: OpportunityLead }) {
     const waUrl = createWhatsAppUrl(lead.whatsappValue);
-    const phone = lead.phoneValue?.replace(/\D/g, "");
     return <div className="flex flex-wrap justify-end gap-1.5">
       {waUrl ? <Button asChild variant="secondary" size="sm"><a href={waUrl} target="_blank" rel="noreferrer" aria-label={`Abrir WhatsApp de ${lead.business}`}><MessageCircle className="size-3.5" />WhatsApp</a></Button> : null}
-      {!waUrl && phone ? <Button asChild variant="secondary" size="sm"><a href={`tel:+${phone}`} aria-label={`Ligar para ${lead.business}`}><PhoneCall className="size-3.5" />Ligar</a></Button> : null}
       <Button asChild variant="ghost" size="icon" title="Editar lead"><Link href={`/leads/${lead.id}/editar`} aria-label={`Editar ${lead.business}`}><Pencil className="size-3.5" /></Link></Button>
       <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10 hover:text-destructive" title="Excluir lead" onClick={() => remove(lead)} disabled={deletingId === lead.id} aria-label={`Excluir ${lead.business}`}>{deletingId === lead.id ? <Loader2 className="size-3.5 animate-spin" /> : <Trash2 className="size-3.5" />}</Button>
     </div>;

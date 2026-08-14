@@ -108,14 +108,15 @@ export async function POST(request: Request) {
         niche: record.segment,
         address: record.address,
         phone: record.phoneNormalized,
+        whatsapp: record.phoneNormalized,
         source: "IMPORT" as const,
         websiteStatus: "UNKNOWN" as const,
-        score: 10,
+        score: 25,
         contactAllowed: true,
         duplicateKey: `phone:${record.phoneNormalized}`,
         notes: record.segmentSource === "file"
-          ? `Importado da planilha XLS ${file.name.slice(0, 180)}. Aba: ${record.sheet}. Segmento original: ${record.originalSegment}.`
-          : `Importado da planilha XLS ${file.name.slice(0, 180)}. Aba: ${record.sheet}. Segmento identificado pelo nome do contato.`,
+          ? `Importado da planilha XLS ${file.name.slice(0, 180)}. Aba: ${record.sheet}. Segmento original: ${record.originalSegment}. Telefone tratado como WhatsApp.`
+          : `Importado da planilha XLS ${file.name.slice(0, 180)}. Aba: ${record.sheet}. Segmento identificado pelo nome do contato. Telefone tratado como WhatsApp.`,
       })),
     });
 

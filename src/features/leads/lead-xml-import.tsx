@@ -95,7 +95,7 @@ export function LeadSpreadsheetImport() {
     <section className="overflow-hidden rounded-xl border border-border bg-surface">
       <div className="border-b border-border p-5">
         <h2 className="text-sm font-semibold">Anexar planilha XLS</h2>
-        <p className="mt-1 text-xs leading-5 text-muted-foreground">A planilha deve conter Nome, Endereço e Telefone. O segmento pode vir em uma coluna ou ser identificado com segurança no nome.</p>
+        <p className="mt-1 text-xs leading-5 text-muted-foreground">A planilha deve conter Nome, Endereço e Telefone. O segmento pode vir em uma coluna ou ser identificado com segurança no nome. Todo telefone válido será tratado como WhatsApp.</p>
       </div>
       <div className="p-5">
         <input ref={inputRef} id="lead-xls-file" type="file" accept=".xls,application/vnd.ms-excel" className="sr-only" onChange={(event) => selectFile(event.target.files?.[0])} />
@@ -106,7 +106,7 @@ export function LeadSpreadsheetImport() {
         </label>
       </div>
       <div className="flex flex-col justify-between gap-3 border-t border-border px-5 py-4 sm:flex-row sm:items-center">
-        <p className="inline-flex items-center gap-2 text-[11px] text-subtle"><ShieldCheck className="size-3.5" />Nada será cadastrado antes da sua confirmação.</p>
+        <p className="inline-flex items-center gap-2 text-[11px] text-subtle"><ShieldCheck className="size-3.5" />Nada será cadastrado antes da sua confirmação. O botão abrirá o número no WhatsApp.</p>
         {file ? <Button type="button" variant="ghost" size="sm" onClick={clearFile} disabled={Boolean(working)}>Remover arquivo</Button> : null}
       </div>
     </section>
@@ -132,7 +132,7 @@ export function LeadSpreadsheetImport() {
 
       {preview.records.length ? <div className="overflow-hidden rounded-xl border border-border bg-surface">
         <div className="border-b border-border px-5 py-4"><h2 className="text-sm font-semibold">Prévia dos leads válidos</h2><p className="mt-1 text-xs text-muted-foreground">Exibindo 5 registros por página.</p></div>
-        <div className="hidden overflow-x-auto md:block"><table className="w-full min-w-[760px] text-left"><thead><tr className="border-b border-border text-[10px] font-semibold uppercase tracking-[0.12em] text-subtle"><th className="px-5 py-3">Nome</th><th className="px-4 py-3">Segmento</th><th className="px-4 py-3">Endereço</th><th className="px-5 py-3">Telefone</th></tr></thead><tbody>{visibleRecords.map((record) => <tr key={`${record.row}-${record.phoneNormalized}`} className="border-b border-border last:border-0"><td className="px-5 py-4 text-sm font-medium">{record.name}</td><td className="px-4 py-4"><Badge variant="neutral">{record.segment}</Badge>{record.segmentSource === "name" ? <p className="mt-1 text-[10px] text-subtle">Identificado pelo nome</p> : null}</td><td className="max-w-sm px-4 py-4 text-xs leading-5 text-muted-foreground">{record.address}</td><td className="whitespace-nowrap px-5 py-4 font-mono text-xs">{formatPhone(record.phoneNormalized)}</td></tr>)}</tbody></table></div>
+        <div className="hidden overflow-x-auto md:block"><table className="w-full min-w-[760px] text-left"><thead><tr className="border-b border-border text-[10px] font-semibold uppercase tracking-[0.12em] text-subtle"><th className="px-5 py-3">Nome</th><th className="px-4 py-3">Segmento</th><th className="px-4 py-3">Endereço</th><th className="px-5 py-3">WhatsApp</th></tr></thead><tbody>{visibleRecords.map((record) => <tr key={`${record.row}-${record.phoneNormalized}`} className="border-b border-border last:border-0"><td className="px-5 py-4 text-sm font-medium">{record.name}</td><td className="px-4 py-4"><Badge variant="neutral">{record.segment}</Badge>{record.segmentSource === "name" ? <p className="mt-1 text-[10px] text-subtle">Identificado pelo nome</p> : null}</td><td className="max-w-sm px-4 py-4 text-xs leading-5 text-muted-foreground">{record.address}</td><td className="whitespace-nowrap px-5 py-4 font-mono text-xs">{formatPhone(record.phoneNormalized)}</td></tr>)}</tbody></table></div>
         <div className="divide-y divide-border md:hidden">{visibleRecords.map((record) => <article key={`${record.row}-${record.phoneNormalized}`} className="p-4"><div className="flex items-start justify-between gap-3"><p className="text-sm font-medium">{record.name}</p><div className="text-right"><Badge variant="neutral">{record.segment}</Badge>{record.segmentSource === "name" ? <p className="mt-1 text-[10px] text-subtle">Pelo nome</p> : null}</div></div><p className="mt-2 text-xs leading-5 text-muted-foreground">{record.address}</p><p className="mt-2 font-mono text-xs">{formatPhone(record.phoneNormalized)}</p></article>)}</div>
         <Pagination page={page} pageCount={pageCount} total={preview.records.length} onPage={setPage} />
       </div> : null}

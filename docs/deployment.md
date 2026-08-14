@@ -21,6 +21,10 @@ Variáveis de **Production**:
 ```text
 DATABASE_URL=<URL pooled do Prisma Postgres>
 AUTH_SECRET=<segredo aleatório com pelo menos 32 caracteres>
+GOOGLE_PLACES_API_KEY=<chave server-side da Places API (New)>
+OPENAI_API_KEY=<chave server-side da OpenAI>
+OPENAI_MODEL=gpt-5.4-nano
+AI_PROVIDER=openai
 ```
 
 Não copie o `AUTH_URL` do Prisma Compute para a Vercel. O Auth.js reconhece a plataforma e deriva o domínio correto, inclusive nas Previews. `AUTH_TRUST_HOST` é opcional na Vercel; se configurado, use `true`.
@@ -35,7 +39,7 @@ O build da Vercel executa `prisma generate` e `next build`, mas deliberadamente 
 npm run db:deploy
 ```
 
-Para criar ou atualizar a conta inicial e os dados de exemplo, defina temporariamente `SEED_ADMIN_NAME`, `SEED_ADMIN_EMAIL` e `SEED_ADMIN_PASSWORD` (mínimo de 9 caracteres), execute `npm run db:seed` e remova essas variáveis do terminal. O repositório não contém mais uma senha de demonstração conhecida.
+Para criar ou atualizar a conta inicial, as etapas do pipeline e um único lead claramente marcado como exemplo visual, defina temporariamente `SEED_ADMIN_NAME`, `SEED_ADMIN_EMAIL` e `SEED_ADMIN_PASSWORD` (mínimo de 9 caracteres), execute `npm run db:seed` e remova essas variáveis do terminal. O repositório não contém senha nem currículo pessoal.
 
 ### Prisma Compute
 

@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { DemoLead } from "@/lib/demo-data";
+import type { OpportunityLead as DemoLead } from "@/types/opportunity";
 
 const statusLabel: Record<string, string> = { NEW: "Novo", ANALYZED: "Analisado", QUALIFIED: "Qualificado", CONTACTED: "Contatado", REPLIED: "Respondeu" };
 

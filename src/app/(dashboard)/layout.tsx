@@ -19,7 +19,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <AppSidebar />
       </aside>
       <div className="lg:pl-[272px]">
-        <AppTopbar />
+        <AppTopbar user={{ name: session.user.name, email: session.user.email }} />
         <main className="mx-auto w-full max-w-[1600px] p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
     </div>

@@ -1,5 +1,15 @@
-export type LeadSearchParams = { niche: string; location: string; limit: number; withoutWebsite?: boolean; hasInstagram?: boolean; hasWhatsapp?: boolean };
-export type LeadResult = { name?: string; businessName: string; niche: string; city?: string; state?: string; website?: string; instagram?: string; whatsapp?: string; sourceUrl?: string };
+export type LeadSearchParams = { niche: string; location: string; limit: number; withoutWebsite?: boolean };
+export type LeadResult = {
+  placeId: string;
+  businessName: string;
+  niche: string;
+  formattedAddress?: string;
+  phone?: string;
+  website?: string;
+  sourceUrl: string;
+  businessStatus?: string;
+  hasWebsite: boolean;
+};
 
 export interface LeadProvider {
   readonly name: string;

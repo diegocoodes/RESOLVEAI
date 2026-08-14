@@ -30,3 +30,6 @@ next-env.d.ts
 .prisma/
 
 /.vercel/
+
+# Private source documents. Their verified facts are imported into the database.
+/src/pub/*.pdf

@@ -7,7 +7,7 @@ import { AtSign, GripVertical, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import { leads as initialLeads, type DemoLead } from "@/lib/demo-data";
+import type { OpportunityLead as DemoLead } from "@/types/opportunity";
 
 const columns = [
   { id: "NEW", label: "Novo" }, { id: "ANALYZED", label: "Analisado" }, { id: "QUALIFIED", label: "Qualificado" },
@@ -15,7 +15,7 @@ const columns = [
   { id: "PROPOSAL", label: "Proposta" }, { id: "WON", label: "Fechado" }, { id: "LOST", label: "Perdido" },
 ];
 
-export function PipelineBoard() {
+export function PipelineBoard({ initialLeads }: { initialLeads: DemoLead[] }) {
   const [leads, setLeads] = useState(initialLeads);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
   function onDragEnd(event: DragEndEvent) {

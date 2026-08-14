@@ -1,0 +1,1 @@
+ALTER TABLE "Experience" ALTER COLUMN "startedAt" DROP NOT NULL;

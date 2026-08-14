@@ -209,7 +209,7 @@ model Experience {
   company     String
   location    String?
   description String
-  startedAt   DateTime
+  startedAt   DateTime?
   endedAt     DateTime?
   current     Boolean  @default(false)
   sortOrder   Int      @default(0)

@@ -21,13 +21,10 @@ export const leadInputSchema = z.object({
 });
 
 export const leadSearchSchema = z.object({
-  niche: z.string().min(2),
-  location: z.string().min(2),
-  limit: z.number().int().min(1).max(100),
-  withoutWebsite: z.boolean().optional(),
-  hasInstagram: z.boolean().optional(),
-  hasWhatsapp: z.boolean().optional(),
-  poorWebsite: z.boolean().optional(),
+  niche: z.string().trim().min(2).max(100),
+  location: z.string().trim().min(2).max(120),
+  limit: z.coerce.number().int().min(1).max(20),
+  withoutWebsite: z.boolean().default(true),
 });
 
 export type LeadInput = z.infer<typeof leadInputSchema>;

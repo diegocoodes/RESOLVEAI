@@ -4,15 +4,15 @@ MVP full-stack para centralizar oportunidades de emprego e prospecção comercia
 
 ## O que já funciona
 
-- Dashboard editorial com métricas, gráficos, follow-ups e atividade recente.
-- Vagas: cadastro persistente, extração determinística de requisitos, duplicidade, listagem, detalhe e comparação por evidências.
-- Currículo Mestre e versões personalizadas com regra estrita de não inventar fatos.
-- Download de PDF ATS real, limpo e selecionável.
-- Candidaturas com progressão manual de etapas.
+- Dashboard com contagens e registros reais do workspace, sem métricas fictícias.
+- Vagas: cadastro persistente, extração estruturada com OpenAI e fallback determinístico, duplicidade, detalhe e comparação por evidências.
+- Currículo Mestre importado de uma fonte verificada e versões personalizadas com regra estrita de não inventar fatos.
+- Download de PDF ATS em coluna única, limpo, selecionável e rastreável até os fatos de origem.
+- Candidaturas exibidas a partir do banco, sem processos fictícios.
 - Leads: cadastro, origem, auditoria conservadora, score configurável, duplicidade, exportação, exclusão e bloqueio de contato.
-- Prospecção com contrato de providers autorizados, análise baseada em fatos, mensagens revisáveis e abertura manual do WhatsApp.
-- Pipeline Kanban, campanhas com fila de aprovação, clientes, histórico e análises.
-- Pesquisa global, drawer mobile, estados de loading/empty/error e feedback por toast.
+- Prospecção pela Google Places API (New), com resultados temporários, filtro de negócio sem site, atribuição e cadastro manual após revisão.
+- Pipeline Kanban, campanhas, clientes, histórico e análises alimentados somente por registros persistidos.
+- Pesquisa de módulos, drawer mobile, estados de loading/empty/error e feedback por toast.
 
 ## Executar localmente
 
@@ -58,7 +58,7 @@ npm run lint         # ESLint
 npm run db:generate  # gerar Prisma Client
 npm run db:migrate   # criar/aplicar migration em desenvolvimento
 npm run db:deploy    # aplicar migrations versionadas
-npm run db:seed      # criar a conta inicial e dados de exemplo
+npm run db:seed      # criar a conta, etapas e um único lead marcado como exemplo visual
 npm run db:setup     # aplicar migrations e executar o seed
 ```
 
@@ -69,6 +69,10 @@ O repositório inclui `vercel.json`, build nativo da Vercel e Functions em `iad1
 ```text
 DATABASE_URL=<URL pooled criada pela integração Prisma Postgres>
 AUTH_SECRET=<segredo aleatório com pelo menos 32 caracteres>
+GOOGLE_PLACES_API_KEY=<chave server-side da Places API (New)>
+OPENAI_API_KEY=<chave server-side da OpenAI>
+OPENAI_MODEL=gpt-5.4-nano
+AI_PROVIDER=openai
 ```
 
 Gere `AUTH_SECRET` com `npm exec auth secret`. Não configure `AUTH_URL` na Vercel: o Auth.js deriva corretamente as URLs de Production e Preview. `AUTH_TRUST_HOST` também é inferido pela plataforma.

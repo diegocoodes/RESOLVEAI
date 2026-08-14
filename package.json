@@ -21,10 +21,10 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@auth/prisma-adapter": "latest",
     "@dnd-kit/core": "latest",
     "@dnd-kit/sortable": "latest",
     "@dnd-kit/utilities": "latest",
-    "@auth/prisma-adapter": "latest",
     "@hookform/resolvers": "latest",
     "@prisma/adapter-pg": "latest",
     "@prisma/client": "latest",
@@ -40,6 +40,7 @@
     "lucide-react": "latest",
     "next": "latest",
     "next-auth": "beta",
+    "openai": "^7.4.0",
     "pdf-lib": "latest",
     "pg": "latest",
     "react": "latest",

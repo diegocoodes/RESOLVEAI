@@ -9,9 +9,16 @@ import { signOut } from "next-auth/react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { jobs, leads } from "@/lib/demo-data";
+import { initials } from "@/lib/utils";
 
-export function AppTopbar() {
+const searchableRoutes = [
+  { id: "jobs", title: "Vagas", detail: "Oportunidades de emprego", href: "/vagas", type: "Vaga" },
+  { id: "leads", title: "Leads", detail: "Oportunidades comerciais", href: "/leads", type: "Lead" },
+  { id: "prospecting", title: "Buscar oportunidades", detail: "Google Places", href: "/prospeccao", type: "Lead" },
+  { id: "resumes", title: "Currículos", detail: "Versões ATS", href: "/curriculos", type: "Vaga" },
+];
+
+export function AppTopbar({ user }: { user: { name?: string | null; email?: string | null } }) {
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -25,10 +32,7 @@ export function AppTopbar() {
   const searchResults = useMemo(() => {
     if (!query.trim()) return [];
     const term = query.toLowerCase();
-    return [
-      ...jobs.filter((job) => `${job.title} ${job.company}`.toLowerCase().includes(term)).map((job) => ({ id: job.id, title: job.title, detail: job.company, href: `/vagas/${job.id}`, type: "Vaga" })),
-      ...leads.filter((lead) => `${lead.business} ${lead.segment}`.toLowerCase().includes(term)).map((lead) => ({ id: lead.id, title: lead.business, detail: lead.segment, href: `/leads/${lead.id}`, type: "Lead" })),
-    ].slice(0, 8);
+    return searchableRoutes.filter((item) => `${item.title} ${item.detail}`.toLowerCase().includes(term));
   }, [query]);
 
   return (
@@ -66,8 +70,8 @@ export function AppTopbar() {
           <span className="absolute right-2 top-2 size-1.5 rounded-full bg-accent" />
         </Button>
         <DropdownMenu.Root>
-          <DropdownMenu.Trigger className="ml-1 flex size-8 items-center justify-center rounded-full border border-border bg-surface-raised text-[11px] font-semibold outline-none focus:ring-2 focus:ring-accent/40" aria-label="Menu da conta">DS</DropdownMenu.Trigger>
-          <DropdownMenu.Portal><DropdownMenu.Content align="end" sideOffset={8} className="z-50 min-w-52 rounded-lg border border-border bg-surface p-1 shadow-2xl"><div className="border-b border-border px-3 py-2"><p className="text-xs font-medium">Diego Silva</p><p className="mt-0.5 text-[11px] text-subtle">demo@opportunityos.local</p></div><DropdownMenu.Item asChild><Link href="/configuracoes/perfil" className="mt-1 flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-xs text-muted-foreground outline-none hover:bg-surface-hover hover:text-foreground"><Settings2 className="size-3.5" />Configurações</Link></DropdownMenu.Item><DropdownMenu.Item onSelect={() => signOut({ callbackUrl: "/login" })} className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-xs text-destructive outline-none hover:bg-destructive/10"><LogOut className="size-3.5" />Sair</DropdownMenu.Item></DropdownMenu.Content></DropdownMenu.Portal>
+          <DropdownMenu.Trigger className="ml-1 flex size-8 items-center justify-center rounded-full border border-border bg-surface-raised text-[11px] font-semibold outline-none focus:ring-2 focus:ring-accent/40" aria-label="Menu da conta">{initials(user.name ?? "Usuário")}</DropdownMenu.Trigger>
+          <DropdownMenu.Portal><DropdownMenu.Content align="end" sideOffset={8} className="z-50 min-w-52 rounded-lg border border-border bg-surface p-1 shadow-2xl"><div className="border-b border-border px-3 py-2"><p className="text-xs font-medium">{user.name ?? "Usuário"}</p><p className="mt-0.5 text-[11px] text-subtle">{user.email}</p></div><DropdownMenu.Item asChild><Link href="/configuracoes/perfil" className="mt-1 flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-xs text-muted-foreground outline-none hover:bg-surface-hover hover:text-foreground"><Settings2 className="size-3.5" />Configurações</Link></DropdownMenu.Item><DropdownMenu.Item onSelect={() => signOut({ callbackUrl: "/login" })} className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-xs text-destructive outline-none hover:bg-destructive/10"><LogOut className="size-3.5" />Sair</DropdownMenu.Item></DropdownMenu.Content></DropdownMenu.Portal>
         </DropdownMenu.Root>
       </div>
 

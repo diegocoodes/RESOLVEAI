@@ -23,12 +23,12 @@ export class JobRepository {
       { descriptionHash },
     ] } });
     if (duplicate) throw new DuplicateJobError("Possível vaga duplicada.");
-    const requirements = [...new Set([...extracted.technologies, ...extracted.softSkills])];
+    const requirements = [...new Map([...extracted.technologies, ...extracted.hardSkills, ...extracted.softSkills].map((name) => [name.trim().toLocaleLowerCase("pt-BR"), name.trim()])).values()].filter(Boolean);
     return prisma.job.create({ data: {
       userId, title: input.title, company: input.company || null, url: input.url || null, location: input.location || null,
       workMode: input.workMode, description: input.description, salary: input.salary || null, source: input.source || "Manual",
       publishedAt: input.publishedAt ? new Date(input.publishedAt) : null, descriptionHash, status: input.analyzeNow ? "ANALYZED" : "SAVED",
-      requirements: { create: requirements.map((name) => ({ name, normalized: name.toLowerCase(), category: extracted.softSkills.includes(name) ? "SOFT_SKILL" : "TECHNOLOGY", level: "REQUIRED" })) },
+      requirements: { create: requirements.map((name) => ({ name, normalized: name.toLocaleLowerCase("pt-BR"), category: extracted.softSkills.includes(name) ? "SOFT_SKILL" : extracted.technologies.includes(name) ? "TECHNOLOGY" : "HARD_SKILL", level: "REQUIRED" })) },
     }, select: { id: true } });
   }
 }

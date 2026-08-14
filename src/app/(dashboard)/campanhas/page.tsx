@@ -1,10 +1,9 @@
-import { Plus, Send } from "lucide-react";
+import { Send } from "lucide-react";
+import { auth } from "@/auth";
+import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { ApprovalQueue } from "@/features/campaigns/approval-queue";
-
+import { Card, CardContent } from "@/components/ui/card";
+import { CampaignRepository } from "@/repositories/campaign.repository";
 export const metadata = { title: "Campanhas" };
-export default function CampaignsPage() { return <div className="space-y-6"><PageHeader eyebrow="Prospecção" title="Campanhas" description="Agrupe leads qualificados, revise cada mensagem e mantenha o envio sob controle humano." actions={<Button><Plus className="size-4" />Nova campanha</Button>} /><div className="grid gap-4 xl:grid-cols-[1.25fr_0.75fr]"><ApprovalQueue /><Card><CardHeader><div><h2 className="text-sm font-semibold">Campanhas recentes</h2><p className="mt-1 text-xs text-muted-foreground">Resultados consolidados</p></div></CardHeader><CardContent className="space-y-3"><Campaign name="Personais Recife — Agosto" status="Em revisão" found={35} approved={18} /><Campaign name="Clínicas Grande Recife" status="Rascunho" found={22} approved={0} /></CardContent></Card></div></div>; }
-function Campaign({ name, status, found, approved }: { name: string; status: string; found: number; approved: number }) { return <div className="rounded-lg border border-border bg-background p-4"><div className="flex items-start justify-between gap-3"><div><p className="text-sm font-medium">{name}</p><p className="mt-1 text-xs text-muted-foreground">{found} encontrados · {approved} aprovados</p></div><Send className="size-4 text-subtle" /></div><Badge variant="neutral" className="mt-4">{status}</Badge></div>; }
+export default async function CampaignsPage() { const session = await auth(); const campaigns = session?.user.id ? await new CampaignRepository().list(session.user.id) : []; return <div className="space-y-6"><PageHeader eyebrow="Prospecção" title="Campanhas" description="Agrupe leads reais, revise cada mensagem e mantenha o envio sob controle humano." />{!campaigns.length ? <EmptyState icon={Send} title="Nenhuma campanha" description="Cadastre e qualifique leads antes de criar uma campanha." /> : <div className="grid gap-4 lg:grid-cols-2">{campaigns.map((campaign) => <Card key={campaign.id}><CardContent className="p-5"><div className="flex items-start justify-between"><div><h2 className="text-sm font-medium">{campaign.name}</h2><p className="mt-1 text-xs text-muted-foreground">{campaign.leads.length} leads revisados</p></div><Badge variant="neutral">{campaign.status}</Badge></div></CardContent></Card>)}</div>}</div>; }

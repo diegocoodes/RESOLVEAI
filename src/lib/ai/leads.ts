@@ -28,14 +28,8 @@ export function buildLeadOpportunity(facts: LeadFacts) {
 }
 
 export function buildOutreachMessage(facts: LeadFacts) {
-  const greeting = facts.name ? `Olá, ${facts.name}!` : "Olá!";
-  const source = facts.discoverySource ? ` pelo ${facts.discoverySource}` : "";
-  const context = facts.businessName ? ` Conheci o trabalho da ${facts.businessName}${source}` : facts.niche ? ` Conheci seu trabalho na área de ${facts.niche}${source}` : ` Conheci o seu negócio${source}`;
-  const local = facts.city ? ` em ${facts.city}` : "";
-  const observation = facts.websiteStatus === "NO_WEBSITE"
-    ? " e não encontrei um site próprio nas informações públicas consultadas."
-    : facts.websiteStatus === "NEEDS_IMPROVEMENT"
-      ? " e identifiquei alguns pontos que podem melhorar a experiência do site."
-      : ".";
-  return `${greeting}${context}${local}${observation} Crio sites profissionais e estou entrando em contato para oferecer um site para sua empresa, pensado para apresentar seus serviços e facilitar o contato de novos clientes. Podemos conversar?`;
+  const greeting = facts.name ? `Oi, ${facts.name}! Tudo bem? 😊` : "Oi! Tudo bem? 😊";
+  const source = facts.discoverySource ? ` pelo ${facts.discoverySource}` : " online";
+
+  return `${greeting}\n\nEncontrei seu trabalho${source} e achei interessante a forma como você apresenta seus serviços.\n\nTrabalho com criação de sites e gosto de ajudar profissionais a organizarem melhor sua presença online, apresentarem seus serviços e facilitarem o contato com novos clientes.\n\nPensei que poderia ser algo interessante para o seu trabalho também. Se fizer sentido para você, podemos conversar um pouquinho sobre a ideia.`;
 }

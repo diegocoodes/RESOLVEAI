@@ -19,7 +19,7 @@ export default async function LeadsPage() {
   ] as const;
 
   return <div className="space-y-6">
-    <PageHeader eyebrow="Prospecção" title="Leads" description="Contatos organizados por segmento, com origem e dados de contato sob sua revisão." actions={<><Button asChild variant="secondary"><Link href="/prospeccao"><FileUp className="size-4" />Anexar arquivo XML</Link></Button><Button asChild><Link href="/leads/novo"><Plus className="size-4" />Novo lead</Link></Button></>} />
+    <PageHeader eyebrow="Prospecção" title="Leads" description="Contatos organizados por segmento, com origem e dados de contato sob sua revisão." actions={<><Button asChild variant="secondary"><Link href="/prospeccao"><FileUp className="size-4" />Anexar planilha XLS</Link></Button><Button asChild><Link href="/leads/novo"><Plus className="size-4" />Novo lead</Link></Button></>} />
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">{summaries.map(([label, value]) => <div key={label} className="rounded-lg border border-border bg-surface px-4 py-3"><p className="text-[11px] text-muted-foreground">{label}</p><p className="mt-1 font-mono text-xl font-medium">{value}</p></div>)}</div>
     <LeadsTable leads={leads} />
   </div>;

@@ -3,12 +3,12 @@ import { auth } from "@/auth";
 import { getPrisma } from "@/lib/db/prisma";
 import { normalizeBrazilianPhoneNumber } from "@/lib/whatsapp";
 import {
-  LeadXmlImportError,
-  MAX_XML_FILE_SIZE,
-  parseLeadXml,
-  type XmlLeadIssue,
-  type XmlLeadRecord,
-} from "@/services/lead-xml-import.service";
+  LeadSpreadsheetImportError,
+  MAX_SPREADSHEET_FILE_SIZE,
+  parseLeadSpreadsheet,
+  type SpreadsheetLeadIssue,
+  type SpreadsheetLeadRecord,
+} from "@/services/lead-spreadsheet-import.service";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -25,7 +25,7 @@ function nameAddressKey(name?: string | null, address?: string | null) {
   return normalizedName && normalizedAddress ? `${normalizedName}|${normalizedAddress}` : "";
 }
 
-async function classifyRecords(userId: string, records: XmlLeadRecord[]) {
+async function classifyRecords(userId: string, records: SpreadsheetLeadRecord[]) {
   const existing = await getPrisma().lead.findMany({
     where: { userId },
     select: { name: true, businessName: true, address: true, phone: true, whatsapp: true },
@@ -34,19 +34,19 @@ async function classifyRecords(userId: string, records: XmlLeadRecord[]) {
   const existingNames = new Set(existing.map((lead) => nameAddressKey(lead.businessName ?? lead.name, lead.address)).filter(Boolean));
   const filePhones = new Set<string>();
   const fileNames = new Set<string>();
-  const ready: XmlLeadRecord[] = [];
-  const duplicates: XmlLeadIssue[] = [];
+  const ready: SpreadsheetLeadRecord[] = [];
+  const duplicates: SpreadsheetLeadIssue[] = [];
 
   for (const record of records) {
     const recordNameKey = nameAddressKey(record.name, record.address);
     let reason = "";
     if (existingPhones.has(record.phoneNormalized)) reason = "Telefone já cadastrado nos leads.";
-    else if (filePhones.has(record.phoneNormalized)) reason = "Telefone repetido dentro do arquivo XML.";
+    else if (filePhones.has(record.phoneNormalized)) reason = "Telefone repetido dentro da planilha XLS.";
     else if (existingNames.has(recordNameKey)) reason = "Nome e endereço já cadastrados nos leads.";
-    else if (fileNames.has(recordNameKey)) reason = "Nome e endereço repetidos dentro do arquivo XML.";
+    else if (fileNames.has(recordNameKey)) reason = "Nome e endereço repetidos dentro da planilha XLS.";
 
     if (reason) {
-      duplicates.push({ row: record.row, name: record.name, segment: record.segment, reason });
+      duplicates.push({ row: record.row, sheet: record.sheet, name: record.name, segment: record.segment, reason });
       continue;
     }
 
@@ -59,7 +59,7 @@ async function classifyRecords(userId: string, records: XmlLeadRecord[]) {
   return { ready, duplicates };
 }
 
-function segmentSummary(records: XmlLeadRecord[]) {
+function segmentSummary(records: SpreadsheetLeadRecord[]) {
   const totals = new Map<string, number>();
   for (const record of records) totals.set(record.segment, (totals.get(record.segment) ?? 0) + 1);
   return [...totals.entries()].sort(([a], [b]) => a.localeCompare(b, "pt-BR")).map(([name, count]) => ({ name, count }));
@@ -69,10 +69,10 @@ async function readUpload(request: Request) {
   const form = await request.formData();
   const file = form.get("file");
   const action = form.get("action") === "import" ? "import" : "preview";
-  if (!(file instanceof File)) throw new LeadXmlImportError("Anexe um arquivo XML.");
-  if (!file.name.toLocaleLowerCase("pt-BR").endsWith(".xml")) throw new LeadXmlImportError("O arquivo precisa ter a extensão .xml.");
-  if (!file.size || file.size > MAX_XML_FILE_SIZE) throw new LeadXmlImportError("O arquivo XML deve ter entre 1 byte e 5 MB.");
-  return { action: action as ImportAction, file, parsed: parseLeadXml(await file.text()) };
+  if (!(file instanceof File)) throw new LeadSpreadsheetImportError("Anexe uma planilha XLS.");
+  if (!file.name.toLocaleLowerCase("pt-BR").endsWith(".xls")) throw new LeadSpreadsheetImportError("O arquivo precisa ter a extensão .xls.");
+  if (!file.size || file.size > MAX_SPREADSHEET_FILE_SIZE) throw new LeadSpreadsheetImportError("A planilha XLS deve ter entre 1 byte e 5 MB.");
+  return { action: action as ImportAction, file, parsed: parseLeadSpreadsheet(await file.arrayBuffer()) };
 }
 
 export async function POST(request: Request) {
@@ -113,7 +113,7 @@ export async function POST(request: Request) {
         score: 10,
         contactAllowed: true,
         duplicateKey: `phone:${record.phoneNormalized}`,
-        notes: `Importado do arquivo XML ${file.name.slice(0, 180)}. Segmento original: ${record.originalSegment}.`,
+        notes: `Importado da planilha XLS ${file.name.slice(0, 180)}. Aba: ${record.sheet}. Segmento original: ${record.originalSegment}.`,
       })),
     });
 
@@ -124,8 +124,8 @@ export async function POST(request: Request) {
       segments,
     }, { status: 201 });
   } catch (error) {
-    if (error instanceof LeadXmlImportError) return NextResponse.json({ error: error.message }, { status: 400 });
-    console.error("lead.xml-import.failed", error);
-    return NextResponse.json({ error: "Não foi possível processar o arquivo XML." }, { status: 500 });
+    if (error instanceof LeadSpreadsheetImportError) return NextResponse.json({ error: error.message }, { status: 400 });
+    console.error("lead.xls-import.failed", error);
+    return NextResponse.json({ error: "Não foi possível processar a planilha XLS." }, { status: 500 });
   }
 }

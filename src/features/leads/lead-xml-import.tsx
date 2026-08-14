@@ -16,7 +16,7 @@ type PreviewRecord = {
   segment: string;
 };
 
-type ImportIssue = { row: number; name: string; segment?: string; reason: string };
+type ImportIssue = { row: number; sheet?: string; name: string; segment?: string; reason: string };
 type ImportPreview = {
   fileName: string;
   total: number;
@@ -38,7 +38,7 @@ function formatPhone(phone: string) {
   return phone;
 }
 
-export function LeadXmlImport() {
+export function LeadSpreadsheetImport() {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File>();
@@ -54,19 +54,19 @@ export function LeadXmlImport() {
     try {
       const response = await fetch("/api/leads/import", { method: "POST", body: form });
       const payload = (await response.json()) as ImportPreview & { imported?: number; error?: string };
-      if (!response.ok) throw new Error(payload.error ?? "Não foi possível processar o XML.");
+      if (!response.ok) throw new Error(payload.error ?? "Não foi possível processar a planilha XLS.");
 
       if (action === "preview") {
         setPreview(payload);
         setPage(1);
-        toast.success("XML verificado. Revise a organização antes de importar.");
+        toast.success("Planilha verificada. Revise a organização antes de importar.");
       } else {
         toast.success(`${payload.imported ?? 0} leads importados e organizados por segmento.`);
         router.push("/leads");
         router.refresh();
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Não foi possível processar o XML.");
+      toast.error(error instanceof Error ? error.message : "Não foi possível processar a planilha XLS.");
       if (action === "preview") setPreview(undefined);
     } finally {
       setWorking(undefined);
@@ -93,15 +93,15 @@ export function LeadXmlImport() {
   return <div className="space-y-5">
     <section className="overflow-hidden rounded-xl border border-border bg-surface">
       <div className="border-b border-border p-5">
-        <h2 className="text-sm font-semibold">Anexar arquivo XML</h2>
-        <p className="mt-1 text-xs leading-5 text-muted-foreground">O arquivo deve informar nome, endereço, telefone e segmento em cada registro.</p>
+        <h2 className="text-sm font-semibold">Anexar planilha XLS</h2>
+        <p className="mt-1 text-xs leading-5 text-muted-foreground">A planilha deve conter as colunas Nome, Endereço, Telefone e Segmento.</p>
       </div>
       <div className="p-5">
-        <input ref={inputRef} id="lead-xml-file" type="file" accept=".xml,text/xml,application/xml" className="sr-only" onChange={(event) => selectFile(event.target.files?.[0])} />
-        <label htmlFor="lead-xml-file" className="flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-accent/40 bg-accent/[0.04] px-5 py-7 text-center transition-colors hover:border-accent hover:bg-accent/[0.07]">
+        <input ref={inputRef} id="lead-xls-file" type="file" accept=".xls,application/vnd.ms-excel" className="sr-only" onChange={(event) => selectFile(event.target.files?.[0])} />
+        <label htmlFor="lead-xls-file" className="flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-accent/40 bg-accent/[0.04] px-5 py-7 text-center transition-colors hover:border-accent hover:bg-accent/[0.07]">
           {working === "preview" ? <Loader2 className="size-7 animate-spin text-accent" /> : preview ? <FileCheck2 className="size-7 text-emerald-400" /> : <FileUp className="size-7 text-accent" />}
-          <span className="mt-3 text-sm font-medium">{working === "preview" ? "Verificando arquivo..." : file?.name ?? "Selecionar arquivo XML"}</span>
-          <span className="mt-1 text-xs text-muted-foreground">Somente .xml, com até 5 MB e 2.000 registros</span>
+          <span className="mt-3 text-sm font-medium">{working === "preview" ? "Verificando planilha..." : file?.name ?? "Selecionar planilha XLS"}</span>
+          <span className="mt-1 text-xs text-muted-foreground">Somente .xls, com até 5 MB e 2.000 registros</span>
         </label>
       </div>
       <div className="flex flex-col justify-between gap-3 border-t border-border px-5 py-4 sm:flex-row sm:items-center">
@@ -154,7 +154,7 @@ function Summary({ icon: Icon, label, value, tone }: { icon: typeof UsersRound; 
 }
 
 function IssueList({ title, issues }: { title: string; issues: ImportIssue[] }) {
-  return <details className="rounded-xl border border-border bg-surface p-5" open={Boolean(issues.length)}><summary className="cursor-pointer text-sm font-semibold">{title} ({issues.length})</summary>{issues.length ? <div className="mt-4 max-h-64 space-y-2 overflow-y-auto">{issues.map((issue) => <div key={`${issue.row}-${issue.reason}`} className="rounded-lg border border-border bg-background p-3"><div className="flex justify-between gap-3"><p className="text-xs font-medium">{issue.name}</p><span className="font-mono text-[10px] text-subtle">Linha {issue.row}</span></div><p className="mt-1 text-[11px] text-muted-foreground">{issue.reason}</p></div>)}</div> : <p className="mt-3 text-xs text-muted-foreground">Nenhum registro nesta categoria.</p>}</details>;
+  return <details className="rounded-xl border border-border bg-surface p-5" open={Boolean(issues.length)}><summary className="cursor-pointer text-sm font-semibold">{title} ({issues.length})</summary>{issues.length ? <div className="mt-4 max-h-64 space-y-2 overflow-y-auto">{issues.map((issue) => <div key={`${issue.sheet}-${issue.row}-${issue.reason}`} className="rounded-lg border border-border bg-background p-3"><div className="flex justify-between gap-3"><p className="text-xs font-medium">{issue.name}</p><span className="font-mono text-[10px] text-subtle">{issue.sheet ? `${issue.sheet} · ` : ""}Linha {issue.row}</span></div><p className="mt-1 text-[11px] text-muted-foreground">{issue.reason}</p></div>)}</div> : <p className="mt-3 text-xs text-muted-foreground">Nenhum registro nesta categoria.</p>}</details>;
 }
 
 function Pagination({ page, pageCount, total, onPage }: { page: number; pageCount: number; total: number; onPage: (page: number) => void }) {

@@ -39,7 +39,7 @@ const navGroups: NavGroup[] = [
   {
     label: "Prospecção",
     items: [
-      { label: "Importar XML", href: "/prospeccao", icon: FileUp },
+      { label: "Importar XLS", href: "/prospeccao", icon: FileUp },
       { label: "Leads", href: "/leads", icon: UsersRound },
       { label: "Campanhas", href: "/campanhas", icon: Send },
       { label: "Mensagens", href: "/mensagens", icon: MessagesSquare },

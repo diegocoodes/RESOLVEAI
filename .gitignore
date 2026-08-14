@@ -18,6 +18,7 @@
 
 # generated
 /src/generated/prisma
+/.prisma/
 
 # logs and editor
 npm-debug.log*
@@ -26,3 +27,4 @@ pnpm-debug.log*
 .DS_Store
 *.tsbuildinfo
 next-env.d.ts
+.prisma/

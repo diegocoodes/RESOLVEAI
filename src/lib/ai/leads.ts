@@ -4,6 +4,7 @@ export type LeadFacts = {
   niche?: string | null;
   city?: string | null;
   state?: string | null;
+  discoverySource?: "Google" | "Instagram" | null;
   websiteStatus?: "NO_WEBSITE" | "GOOD" | "NEEDS_IMPROVEMENT" | "UNKNOWN";
   whatsapp?: string | null;
   instagram?: string | null;
@@ -28,7 +29,8 @@ export function buildLeadOpportunity(facts: LeadFacts) {
 
 export function buildOutreachMessage(facts: LeadFacts) {
   const greeting = facts.name ? `Olá, ${facts.name}!` : "Olá!";
-  const context = facts.businessName ? ` Conheci o trabalho da ${facts.businessName}` : facts.niche ? ` Encontrei seu trabalho na área de ${facts.niche}` : " Encontrei o seu negócio";
+  const source = facts.discoverySource ? ` pelo ${facts.discoverySource}` : "";
+  const context = facts.businessName ? ` Conheci o trabalho da ${facts.businessName}${source}` : facts.niche ? ` Conheci seu trabalho na área de ${facts.niche}${source}` : ` Conheci o seu negócio${source}`;
   const local = facts.city ? ` em ${facts.city}` : "";
   const observation = facts.websiteStatus === "NO_WEBSITE"
     ? " e não encontrei um site próprio nas informações públicas consultadas."

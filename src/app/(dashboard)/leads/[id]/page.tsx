@@ -16,7 +16,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
   const session = await auth();
   const lead = await getLeadForUser(session?.user.id, id);
   if (!lead) notFound();
-  const facts = { name: lead.name, businessName: lead.business, niche: lead.segment, city: lead.city ?? null, state: lead.state ?? null, websiteStatus: lead.websiteStatus === "Sem site" ? "NO_WEBSITE" as const : lead.websiteStatus === "Precisa melhorar" ? "NEEDS_IMPROVEMENT" as const : "UNKNOWN" as const, whatsapp: lead.whatsappValue ?? null, instagram: lead.instagramValue ?? null };
+  const facts = { name: lead.name, businessName: lead.business, niche: lead.segment, city: lead.city ?? null, state: lead.state ?? null, discoverySource: lead.discoverySource, websiteStatus: lead.websiteStatus === "Sem site" ? "NO_WEBSITE" as const : lead.websiteStatus === "Precisa melhorar" ? "NEEDS_IMPROVEMENT" as const : "UNKNOWN" as const, whatsapp: lead.whatsappValue ?? null, instagram: lead.instagramValue ?? null };
   const analysis = buildLeadOpportunity(facts);
   const message = buildOutreachMessage(facts);
   return (

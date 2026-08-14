@@ -16,10 +16,11 @@ MVP full-stack para centralizar oportunidades de emprego e prospecção comercia
 
 ## Executar localmente
 
-Requisitos: Node.js 20.9+ e Docker (ou outra instância PostgreSQL).
+Requisitos: Node.js 24.x e Docker (ou outra instância PostgreSQL).
 
 ```bash
 cp .env.example .env
+# Edite .env e defina AUTH_SECRET e as credenciais SEED_ADMIN_*.
 docker compose up -d
 npm install
 npm run db:deploy
@@ -37,14 +38,15 @@ npm run check:env
 
 Se `DATABASE_URL` ou `AUTH_SECRET` estiver ausente, a aplicação mostra `/setup` com o diagnóstico em vez da página genérica de erro do Auth.js.
 
-Credenciais criadas pelo seed:
+O seed exige credenciais definidas por você. Antes de executá-lo, configure:
 
 ```text
-E-mail: demo@opportunityos.local
-Senha: Opportunity123!
+SEED_ADMIN_NAME=Administrador
+SEED_ADMIN_EMAIL=seu-email@dominio.com
+SEED_ADMIN_PASSWORD=<senha única com pelo menos 12 caracteres>
 ```
 
-Troque essas credenciais antes de qualquer uso real.
+Esses valores não precisam ficar configurados no runtime da aplicação.
 
 ## Comandos
 
@@ -56,29 +58,30 @@ npm run lint         # ESLint
 npm run db:generate  # gerar Prisma Client
 npm run db:migrate   # criar/aplicar migration em desenvolvimento
 npm run db:deploy    # aplicar migrations versionadas
-npm run db:seed      # criar dados e usuário demo
+npm run db:seed      # criar a conta inicial e dados de exemplo
 npm run db:setup     # aplicar migrations e executar o seed
 ```
 
-## Deploy com Prisma Postgres
+## Deploy na Vercel com Prisma Postgres
 
-Configure no provedor de hospedagem, sem adicionar os valores ao Git:
+O repositório inclui `vercel.json`, build nativo da Vercel e Functions em `iad1`, próximo ao Prisma Postgres em `us-east-1`. Conecte o banco primário ao projeto pelo Marketplace da Vercel e configure em **Production**:
 
 ```text
-DATABASE_URL=postgres://...?...sslmode=require
+DATABASE_URL=<URL pooled criada pela integração Prisma Postgres>
 AUTH_SECRET=<segredo aleatório com pelo menos 32 caracteres>
-AUTH_TRUST_HOST=true
-AUTH_URL=https://seu-app.prisma.build
 ```
 
-Gere o segredo com `npm exec auth secret`. Em Vercel, `AUTH_TRUST_HOST` é inferido, mas mantê-lo explicitamente como `true` ajuda em outros proxies. Configure as variáveis nos ambientes de Production, Preview e Development, faça um novo deploy e aplique a migration:
+Gere `AUTH_SECRET` com `npm exec auth secret`. Não configure `AUTH_URL` na Vercel: o Auth.js deriva corretamente as URLs de Production e Preview. `AUTH_TRUST_HOST` também é inferido pela plataforma.
+
+As migrations não rodam durante o build para impedir que uma Preview altere o banco principal. Aplique-as de um ambiente seguro antes do primeiro deploy:
 
 ```bash
 npm run db:deploy
-npm run db:seed
 ```
 
-No Prisma Compute, `AUTH_URL` deve apontar para o endpoint público do app para impedir callbacks para o endereço interno do container. O endpoint `GET /api/health` confirma, sem expor credenciais, se o Auth.js está configurado e se o PostgreSQL responde.
+Use um banco separado para Preview ou deixe `DATABASE_URL` restrita a Production. Depois do deploy, `GET /api/health` confirma, sem expor credenciais, se o Auth.js está configurado e se o PostgreSQL responde. Veja o checklist completo em [docs/deployment.md](docs/deployment.md).
+
+O Prisma Compute continua compatível. Nesse destino, `AUTH_URL` deve apontar para o endpoint público terminado em `.prisma.build`.
 
 ## Segurança e privacidade
 

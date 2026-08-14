@@ -3,16 +3,31 @@ import bcrypt from "bcryptjs";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 
-const connectionString = process.env.DATABASE_URL;
-if (!connectionString) throw new Error("DATABASE_URL não configurada.");
+const connectionString = process.env.DIRECT_URL ?? process.env.DATABASE_URL;
+if (!connectionString) throw new Error("DIRECT_URL ou DATABASE_URL não configurada.");
+
+const adminName = process.env.SEED_ADMIN_NAME?.trim() || "Administrador";
+const configuredAdminEmail = process.env.SEED_ADMIN_EMAIL?.trim().toLowerCase();
+const configuredAdminPassword = process.env.SEED_ADMIN_PASSWORD;
+
+if (!configuredAdminEmail || !configuredAdminEmail.includes("@")) {
+  throw new Error("SEED_ADMIN_EMAIL deve conter um e-mail válido.");
+}
+if (!configuredAdminPassword || configuredAdminPassword.length < 12) {
+  throw new Error("SEED_ADMIN_PASSWORD deve ter pelo menos 12 caracteres.");
+}
+
+const adminEmail: string = configuredAdminEmail;
+const adminPassword: string = configuredAdminPassword;
+
 const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString }) });
 
 async function main() {
-  const passwordHash = await bcrypt.hash("Opportunity123!", 12);
+  const passwordHash = await bcrypt.hash(adminPassword, 12);
   const user = await prisma.user.upsert({
-    where: { email: "demo@opportunityos.local" },
-    update: { name: "Diego Silva", passwordHash },
-    create: { email: "demo@opportunityos.local", name: "Diego Silva", passwordHash },
+    where: { email: adminEmail },
+    update: { name: adminName, passwordHash },
+    create: { email: adminEmail, name: adminName, passwordHash },
   });
 
   const existingResume = await prisma.resume.findFirst({ where: { userId: user.id, isMaster: true } });

@@ -10,6 +10,8 @@ export default defineConfig({
   datasource: {
     // `prisma generate` does not open a connection. Commands that access the
     // database are preceded by `npm run check:env` in the documented workflow.
-    url: process.env.DATABASE_URL ?? "",
+    // Runtime traffic uses the pooled DATABASE_URL. Prefer a direct connection
+    // for migration and seed commands when the provider exposes one.
+    url: process.env.DIRECT_URL ?? process.env.DATABASE_URL ?? "",
   },
 });

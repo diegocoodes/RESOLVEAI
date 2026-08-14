@@ -8,23 +8,45 @@ O Opportunity OS agora intercepta esse estado e mostra `/setup`. O endpoint `/ap
 
 ## Prisma Postgres + Vercel
 
-1. Crie uma instância Prisma Postgres pelo Marketplace da Vercel ou no Prisma Data Platform.
-2. Vincule-a ao projeto para criar `DATABASE_URL`.
-3. Adicione `AUTH_SECRET` em Production, Preview e Development.
-4. No Prisma Compute, defina `AUTH_URL` com a URL pública terminada em `.prisma.build`.
-5. Gere o segredo com `npm exec auth secret`.
-6. Faça o deploy do commit.
-7. Em um ambiente seguro com as mesmas variáveis, execute `npm run db:deploy`.
-8. Execute `npm run db:seed` somente quando quiser criar a conta de demonstração.
+### Configuração do projeto
 
-Para produção real, remova ou troque a senha do usuário demo depois do primeiro acesso.
+1. Importe `diegocoodes/RESOLVEAI` na Vercel e mantenha `main` como Production Branch.
+2. Confirme Framework Preset `Next.js`, Root Directory `./` e Node.js `24.x`.
+3. O `vercel.json` seleciona `iad1`, região da Vercel próxima ao banco em `us-east-1`.
+4. Pelo Marketplace da Vercel, conecte o banco primário do projeto Prisma Postgres. A integração deve criar `DATABASE_URL` com a conexão pooled.
+5. Crie `AUTH_SECRET` com `npm exec auth secret` e adicione o valor somente no painel da Vercel.
+
+Variáveis de **Production**:
+
+```text
+DATABASE_URL=<URL pooled do Prisma Postgres>
+AUTH_SECRET=<segredo aleatório com pelo menos 32 caracteres>
+```
+
+Não copie o `AUTH_URL` do Prisma Compute para a Vercel. O Auth.js reconhece a plataforma e deriva o domínio correto, inclusive nas Previews. `AUTH_TRUST_HOST` é opcional na Vercel; se configurado, use `true`.
+
+Não compartilhe o banco de produção com Preview. Conecte um banco separado para branches de Preview ou deixe `DATABASE_URL` habilitada apenas para Production.
+
+### Migrations e conta inicial
+
+O build da Vercel executa `prisma generate` e `next build`, mas deliberadamente não executa migrations. Antes de publicar uma mudança de schema, carregue as variáveis do ambiente seguro e rode:
+
+```bash
+npm run db:deploy
+```
+
+Para criar ou atualizar a conta inicial e os dados de exemplo, defina temporariamente `SEED_ADMIN_NAME`, `SEED_ADMIN_EMAIL` e `SEED_ADMIN_PASSWORD` (mínimo de 12 caracteres), execute `npm run db:seed` e remova essas variáveis do terminal. O repositório não contém mais uma senha de demonstração conhecida.
+
+### Prisma Compute
+
+O mesmo repositório permanece compatível com Prisma Compute. Fora da Vercel, `AUTH_URL` deve apontar para a URL HTTPS pública do app para impedir callbacks para o endereço interno do container.
 
 ## Verificação
 
-```bash
+```powershell
 npm run check:env
 npm run db:deploy
-npm run build
+$env:VERCEL="1"; npm run vercel-build
 ```
 
 Depois do deploy:

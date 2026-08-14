@@ -48,13 +48,13 @@ export function LeadForm() {
           <div><Label htmlFor="website">Site</Label><Input id="website" placeholder="https://..." {...register("website")} />{error("website")}</div>
           <div><Label htmlFor="instagram">Instagram</Label><Input id="instagram" placeholder="@perfil ou URL" {...register("instagram")} /></div>
           <div><Label htmlFor="facebook">Facebook</Label><Input id="facebook" placeholder="https://..." {...register("facebook")} />{error("facebook")}</div>
-          <div><Label htmlFor="googleBusiness">Google Business</Label><Input id="googleBusiness" placeholder="https://..." {...register("googleBusiness")} />{error("googleBusiness")}</div>
+          <div><Label htmlFor="googleBusiness">URL pública de origem ou mapa</Label><Input id="googleBusiness" placeholder="https://..." {...register("googleBusiness")} />{error("googleBusiness")}</div>
         </div>
       </section>
 
       <section className="rounded-xl border border-border bg-surface p-5 sm:p-6">
         <div className="grid gap-4 sm:grid-cols-2">
-          <div><Label htmlFor="source">Origem *</Label><select id="source" className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm outline-none" {...register("source")}><option value="MANUAL">Cadastro manual</option><option value="GOOGLE_BUSINESS">Google Business</option><option value="DIRECTORY">Diretório público</option><option value="REFERRAL">Indicação</option><option value="IMPORT">Importação autorizada</option><option value="API">API autorizada</option></select></div>
+          <div><Label htmlFor="source">Origem *</Label><select id="source" className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm outline-none" {...register("source")}><option value="MANUAL">Cadastro manual</option><option value="OPENSTREETMAP">OpenStreetMap</option><option value="DIRECTORY">Diretório público</option><option value="REFERRAL">Indicação</option><option value="IMPORT">Importação autorizada</option><option value="API">API autorizada</option></select></div>
           <div><Label htmlFor="sourceUrl">URL de origem</Label><Input id="sourceUrl" placeholder="https://..." {...register("sourceUrl")} />{error("sourceUrl")}</div>
           <div className="sm:col-span-2"><Label htmlFor="notes">Observações</Label><Textarea id="notes" placeholder="Contexto útil e verificável sobre o lead" {...register("notes")} /></div>
         </div>

@@ -1,3 +1,5 @@
+import type { AtsValidation } from "@/lib/ats-validator";
+
 export type AtsExperience = { id: string; role: string; company: string; location: string | null; description: string; startedAt: string | null; endedAt: string | null; current: boolean };
 export type AtsResumeContent = {
   name: string;
@@ -17,10 +19,11 @@ export type AtsResumeContent = {
   relevantRequirements: string[];
   missingRequirements: string[];
   generatedBy: "openai" | "deterministic";
+  atsValidation: AtsValidation;
 };
 
 export function isAtsResumeContent(value: unknown): value is AtsResumeContent {
   if (!value || typeof value !== "object") return false;
   const item = value as Partial<AtsResumeContent>;
-  return typeof item.name === "string" && typeof item.targetTitle === "string" && Array.isArray(item.skills) && Array.isArray(item.experiences);
+  return typeof item.name === "string" && typeof item.targetTitle === "string" && Array.isArray(item.skills) && Array.isArray(item.experiences) && Boolean(item.atsValidation && typeof item.atsValidation.formatScore === "number");
 }

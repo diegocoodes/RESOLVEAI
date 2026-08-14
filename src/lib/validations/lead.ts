@@ -14,7 +14,7 @@ export const leadInputSchema = z.object({
   facebook: optionalUrl,
   website: optionalUrl,
   googleBusiness: optionalUrl,
-  source: z.enum(["MANUAL", "GOOGLE_BUSINESS", "DIRECTORY", "REFERRAL", "IMPORT", "API"]),
+  source: z.enum(["MANUAL", "GOOGLE_BUSINESS", "OPENSTREETMAP", "DIRECTORY", "REFERRAL", "IMPORT", "API"]),
   sourceUrl: optionalUrl,
   notes: z.string().trim().max(2000).optional().or(z.literal("")),
   contactAllowed: z.boolean(),

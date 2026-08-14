@@ -19,7 +19,7 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
   const [job, resume] = await Promise.all([new JobRepository().findById(session.user.id, id), new ResumeRepository().findMaster(session.user.id)]);
   if (!job) notFound();
   const requirements = job.requirements.map((item) => item.name);
-  const match = resume ? new JobMatchService().calculate(requirements, [...resume.skills.map((item) => ({ value: item.name, evidence: `Competência: ${item.name}` })), ...resume.projects.flatMap((project) => project.technologies.map((value) => ({ value, evidence: `Projeto: ${project.name}` })))]) : { score: 0, items: [] };
+  const match = resume ? new JobMatchService().calculate(requirements, [...resume.skills.map((item) => ({ value: item.name, evidence: `Competência: ${item.name}` })), ...resume.projects.flatMap((project) => project.technologies.map((value) => ({ value, evidence: `Projeto: ${project.name}` }))), ...resume.experiences.map((item) => ({ value: `${item.role} ${item.description}`, evidence: `Experiência: ${item.role} na ${item.company}` })), ...(resume.summary ? [{ value: resume.summary, evidence: "Resumo profissional" }] : [])]) : { score: 0, items: [] };
   const grouped = { matched: match.items.filter((item) => item.level === "MATCHED").map((item) => item.requirement), partial: match.items.filter((item) => item.level === "PARTIAL").map((item) => item.requirement), missing: match.items.filter((item) => item.level === "MISSING").map((item) => item.requirement) };
 
   return <div className="space-y-6"><Link href="/vagas" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"><ChevronLeft className="size-3.5" />Voltar para vagas</Link>

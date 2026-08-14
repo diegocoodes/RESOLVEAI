@@ -1,6 +1,6 @@
 export type LeadSearchParams = { niche: string; location: string; limit: number; withoutWebsite?: boolean };
 export type LeadResult = {
-  placeId: string;
+  externalId: string;
   businessName: string;
   niche: string;
   formattedAddress?: string;

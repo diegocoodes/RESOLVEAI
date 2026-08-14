@@ -16,6 +16,10 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
   const resume = row.content;
 
   const document = await PDFDocument.create();
+  document.setTitle(`${resume.name} - ${resume.targetTitle}`);
+  document.setAuthor(resume.name);
+  document.setSubject(`Currículo direcionado para ${resume.targetTitle}`);
+  document.setKeywords(resume.relevantRequirements);
   let page = document.addPage([595.28, 841.89]);
   const regular = await document.embedFont(StandardFonts.Helvetica);
   const bold = await document.embedFont(StandardFonts.HelveticaBold);
@@ -34,8 +38,9 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
   line(resume.targetTitle.toUpperCase(), 10, true);
   wrap([resume.location, resume.phone, resume.email, resume.linkedinUrl, resume.githubUrl].filter(Boolean).join(" | "), 110).forEach((value) => line(value, 8));
   if (resume.summary) { section("RESUMO PROFISSIONAL"); wrap(resume.summary).forEach((value) => line(value)); }
+  if (resume.relevantRequirements.length) { section("COMPETENCIAS ALINHADAS A VAGA"); wrap(resume.relevantRequirements.join(" | ")).forEach((value) => line(value)); }
   section("COMPETENCIAS"); wrap(resume.skills.map((item) => item.name).join(" | ")).forEach((value) => line(value));
-  section("EXPERIENCIA");
+  section("EXPERIENCIA PROFISSIONAL");
   for (const item of resume.experiences) { line(`${item.role} | ${item.company} | ${item.current ? "Atual" : "Periodo nao informado"}`, 9, true); wrap(item.description).forEach((value) => line(value)); y -= 3; }
   if (resume.projects.length) { section("PROJETOS"); for (const item of resume.projects) { line(item.name, 9, true); wrap(item.description).forEach((value) => line(value)); } }
   section("FORMACAO"); resume.education.forEach((item) => line(`${item.course} | ${item.institution}`));

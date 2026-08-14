@@ -7,10 +7,11 @@ MVP full-stack para centralizar oportunidades de emprego e prospecção comercia
 - Dashboard com contagens e registros reais do workspace, sem métricas fictícias.
 - Vagas: cadastro persistente, extração estruturada com OpenAI e fallback determinístico, duplicidade, detalhe e comparação por evidências.
 - Currículo Mestre importado de uma fonte verificada e versões personalizadas com regra estrita de não inventar fatos.
+- Validação ATS interna separa formato técnico da cobertura de palavras-chave comprovadas para cada vaga.
 - Download de PDF ATS em coluna única, limpo, selecionável e rastreável até os fatos de origem.
 - Candidaturas exibidas a partir do banco, sem processos fictícios.
 - Leads: cadastro, origem, auditoria conservadora, score configurável, duplicidade, exportação, exclusão e bloqueio de contato.
-- Prospecção pela Google Places API (New), com resultados temporários, filtro de negócio sem site, atribuição e cadastro manual após revisão.
+- Prospecção gratuita pelo OpenStreetMap/Nominatim, com resultados temporários, filtro de negócio sem site, atribuição e cadastro manual após revisão.
 - Pipeline Kanban, campanhas, clientes, histórico e análises alimentados somente por registros persistidos.
 - Pesquisa de módulos, drawer mobile, estados de loading/empty/error e feedback por toast.
 
@@ -69,11 +70,13 @@ O repositório inclui `vercel.json`, build nativo da Vercel e Functions em `iad1
 ```text
 DATABASE_URL=<URL pooled criada pela integração Prisma Postgres>
 AUTH_SECRET=<segredo aleatório com pelo menos 32 caracteres>
-GOOGLE_PLACES_API_KEY=<chave server-side da Places API (New)>
 OPENAI_API_KEY=<chave server-side da OpenAI>
 OPENAI_MODEL=gpt-5.4-nano
 AI_PROVIDER=openai
+NOMINATIM_BASE_URL=https://nominatim.openstreetmap.org
 ```
+
+O Nominatim público é apropriado para buscas manuais e leves: a aplicação respeita o limite de uma requisição por segundo, identifica o cliente, mantém cache e não executa coleta em massa. Para escalar, configure `NOMINATIM_BASE_URL` com uma instância própria.
 
 Gere `AUTH_SECRET` com `npm exec auth secret`. Não configure `AUTH_URL` na Vercel: o Auth.js deriva corretamente as URLs de Production e Preview. `AUTH_TRUST_HOST` também é inferido pela plataforma.
 

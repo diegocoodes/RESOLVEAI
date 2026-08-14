@@ -21,11 +21,13 @@ Variáveis de **Production**:
 ```text
 DATABASE_URL=<URL pooled do Prisma Postgres>
 AUTH_SECRET=<segredo aleatório com pelo menos 32 caracteres>
-GOOGLE_PLACES_API_KEY=<chave server-side da Places API (New)>
 OPENAI_API_KEY=<chave server-side da OpenAI>
 OPENAI_MODEL=gpt-5.4-nano
 AI_PROVIDER=openai
+NOMINATIM_BASE_URL=https://nominatim.openstreetmap.org
 ```
+
+`NOMINATIM_BASE_URL` é opcional. O padrão público funciona sem chave para uso manual e leve; uma instância própria é necessária para volume maior.
 
 Não copie o `AUTH_URL` do Prisma Compute para a Vercel. O Auth.js reconhece a plataforma e deriva o domínio correto, inclusive nas Previews. `AUTH_TRUST_HOST` é opcional na Vercel; se configurado, use `true`.
 

@@ -48,6 +48,7 @@ enum WebsiteStatus {
 enum LeadSource {
   MANUAL
   GOOGLE_BUSINESS
+  OPENSTREETMAP
   DIRECTORY
   REFERRAL
   IMPORT

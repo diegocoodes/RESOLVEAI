@@ -16,6 +16,7 @@ export type SpreadsheetLeadRecord = {
   phoneNormalized: string;
   segment: string;
   originalSegment: string;
+  segmentSource: "file" | "name";
 };
 
 export type SpreadsheetLeadIssue = {
@@ -56,6 +57,13 @@ function scalarText(value: unknown) {
   return "";
 }
 
+function cleanCellValue(value: unknown) {
+  const text = scalarText(value);
+  const normalized = normalizeKey(text);
+  if (["", "seminfo", "naoinformado", "naoinformada", "indisponivel", "null", "undefined"].includes(normalized)) return "";
+  return text;
+}
+
 function resolveHeader(value: unknown): FieldName | undefined {
   const normalized = normalizeKey(scalarText(value));
   return (Object.keys(FIELD_ALIASES) as FieldName[]).find((field) => FIELD_ALIASES[field].has(normalized));
@@ -77,24 +85,40 @@ export function organizeLeadSegment(raw: string) {
   return titleCase(raw);
 }
 
+export function identifyLeadSegment(name: string, providedSegment = "") {
+  if (providedSegment) return { segment: organizeLeadSegment(providedSegment), source: "file" as const };
+  const normalized = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR").replace(/[^a-z0-9]+/g, " ").trim();
+  const compact = normalized.replace(/\s+/g, "");
+  if (/\b(nutri|nutricionista|nutricao)\b/.test(normalized)) return { segment: "Nutrição", source: "name" as const };
+  if (/\b(advogado|advogada|advogados|advogadas|advocacia)\b/.test(normalized)) return { segment: "Advocacia", source: "name" as const };
+
+  const unrelatedPersonal = /\b(chef|hair|cabeleireir\w*|car|uniforme?s?|otica|optica|sorriso|organizer|stylist|cortina?s?|alfaiate|baby|kids|cachos|lojinha|loja|apple|care|estetic\w*|academia|academy|studio|clinica|clinic|reabilita)\b/.test(normalized);
+  const mentionsPersonal = compact.includes("personal");
+  if (mentionsPersonal && !unrelatedPersonal) return { segment: "Personal Trainer", source: "name" as const };
+  return undefined;
+}
+
 function validateRecord(values: Record<FieldName, string>, row: number, sheet: string): SpreadsheetLeadRecord | SpreadsheetLeadIssue {
   const { name, address, phone, segment: originalSegment } = values;
   const issue = (reason: string): SpreadsheetLeadIssue => ({ row, sheet, name: name || `Registro ${row}`, segment: originalSegment || undefined, reason });
   if (name.length < 2 || name.length > 160) return issue("Nome ausente ou inválido.");
   if (address.length < 3 || address.length > 300) return issue("Endereço ausente ou inválido.");
-  if (originalSegment.length < 2 || originalSegment.length > 100) return issue("Segmento ausente ou inválido.");
+  if (originalSegment.length > 100) return issue("Segmento inválido.");
+
+  const identifiedSegment = identifyLeadSegment(name, originalSegment);
+  if (!identifiedSegment) return issue("Segmento ausente e não identificado com segurança pelo nome.");
 
   const phoneNormalized = normalizeBrazilianPhoneNumber(phone);
   if (!phoneNormalized) return issue("Telefone brasileiro inválido ou sem DDD.");
 
-  return { row, sheet, name, address, phone, phoneNormalized, segment: organizeLeadSegment(originalSegment), originalSegment };
+  return { row, sheet, name, address, phone, phoneNormalized, segment: identifiedSegment.segment, originalSegment, segmentSource: identifiedSegment.source };
 }
 
 function findHeaderRow(rows: unknown[][]) {
   const limit = Math.min(rows.length, 20);
   for (let index = 0; index < limit; index += 1) {
     const fields = rows[index]?.map(resolveHeader) ?? [];
-    if ((Object.keys(FIELD_ALIASES) as FieldName[]).every((field) => fields.includes(field))) return { index, fields };
+    if ((["name", "address", "phone"] as FieldName[]).every((field) => fields.includes(field))) return { index, fields };
   }
   return undefined;
 }
@@ -136,7 +160,7 @@ export function parseLeadSpreadsheet(data: ArrayBuffer | Uint8Array): Spreadshee
 
       const values: Record<FieldName, string> = { name: "", address: "", phone: "", segment: "" };
       header.fields.forEach((field, column) => {
-        if (field && !values[field]) values[field] = scalarText(row[column]);
+        if (field && !values[field]) values[field] = cleanCellValue(row[column]);
       });
       const result = validateRecord(values, range.s.r + index + 1, sheetName);
       if ("phoneNormalized" in result) records.push(result);
@@ -144,7 +168,7 @@ export function parseLeadSpreadsheet(data: ArrayBuffer | Uint8Array): Spreadshee
     }
   }
 
-  if (!sheetsWithHeaders) throw new LeadSpreadsheetImportError("Não encontramos as colunas Nome, Endereço, Telefone e Segmento na planilha.");
+  if (!sheetsWithHeaders) throw new LeadSpreadsheetImportError("Não encontramos as colunas Nome, Endereço e Telefone na planilha.");
   if (!total) throw new LeadSpreadsheetImportError("A planilha não possui contatos abaixo do cabeçalho.");
   return { records, rejected, total };
 }

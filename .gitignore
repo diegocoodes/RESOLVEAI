@@ -33,3 +33,5 @@ next-env.d.ts
 
 # Private source documents. Their verified facts are imported into the database.
 /src/pub/*.pdf
+/src/pub/*.xls
+/src/pub/*.xlsx

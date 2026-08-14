@@ -113,7 +113,9 @@ export async function POST(request: Request) {
         score: 10,
         contactAllowed: true,
         duplicateKey: `phone:${record.phoneNormalized}`,
-        notes: `Importado da planilha XLS ${file.name.slice(0, 180)}. Aba: ${record.sheet}. Segmento original: ${record.originalSegment}.`,
+        notes: record.segmentSource === "file"
+          ? `Importado da planilha XLS ${file.name.slice(0, 180)}. Aba: ${record.sheet}. Segmento original: ${record.originalSegment}.`
+          : `Importado da planilha XLS ${file.name.slice(0, 180)}. Aba: ${record.sheet}. Segmento identificado pelo nome do contato.`,
       })),
     });
 

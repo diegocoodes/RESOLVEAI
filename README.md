@@ -10,7 +10,7 @@ MVP full-stack para centralizar oportunidades de emprego e prospecção comercia
 - Validação ATS interna separa formato técnico da cobertura de palavras-chave comprovadas para cada vaga.
 - Download de PDF ATS em coluna única, limpo, selecionável e rastreável até os fatos de origem.
 - Leads: cadastro simplificado, edição, WhatsApp direto quando informado, telefone, endereço, origem, score, duplicidade, exportação, exclusão e bloqueio de contato.
-- Importação de leads por planilha XLS com prévia, validação obrigatória das colunas Nome, Endereço, Telefone e Segmento, padronização de segmentos e separação de duplicados e registros rejeitados.
+- Importação de leads por planilha XLS com prévia, validação de nome, endereço e telefone, segmento informado ou identificado com segurança no nome, padronização e separação de duplicados e registros rejeitados.
 - Listagem de leads organizada por segmento e paginada em grupos de cinco contatos.
 - Pipeline Kanban, campanhas, clientes, histórico e análises alimentados somente por registros persistidos.
 - Pesquisa de módulos, drawer mobile, estados de loading/empty/error e feedback por toast.

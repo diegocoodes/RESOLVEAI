@@ -35,7 +35,7 @@ O build da Vercel executa `prisma generate` e `next build`, mas deliberadamente 
 npm run db:deploy
 ```
 
-Para criar ou atualizar a conta inicial e os dados de exemplo, defina temporariamente `SEED_ADMIN_NAME`, `SEED_ADMIN_EMAIL` e `SEED_ADMIN_PASSWORD` (mínimo de 12 caracteres), execute `npm run db:seed` e remova essas variáveis do terminal. O repositório não contém mais uma senha de demonstração conhecida.
+Para criar ou atualizar a conta inicial e os dados de exemplo, defina temporariamente `SEED_ADMIN_NAME`, `SEED_ADMIN_EMAIL` e `SEED_ADMIN_PASSWORD` (mínimo de 9 caracteres), execute `npm run db:seed` e remova essas variáveis do terminal. O repositório não contém mais uma senha de demonstração conhecida.
 
 ### Prisma Compute
 

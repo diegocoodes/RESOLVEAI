@@ -43,7 +43,7 @@ O seed exige credenciais definidas por você. Antes de executá-lo, configure:
 ```text
 SEED_ADMIN_NAME=Administrador
 SEED_ADMIN_EMAIL=seu-email@dominio.com
-SEED_ADMIN_PASSWORD=<senha única com pelo menos 12 caracteres>
+SEED_ADMIN_PASSWORD=<senha única com pelo menos 9 caracteres>
 ```
 
 Esses valores não precisam ficar configurados no runtime da aplicação.

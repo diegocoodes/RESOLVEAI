@@ -13,8 +13,8 @@ const configuredAdminPassword = process.env.SEED_ADMIN_PASSWORD;
 if (!configuredAdminEmail || !configuredAdminEmail.includes("@")) {
   throw new Error("SEED_ADMIN_EMAIL deve conter um e-mail válido.");
 }
-if (!configuredAdminPassword || configuredAdminPassword.length < 12) {
-  throw new Error("SEED_ADMIN_PASSWORD deve ter pelo menos 12 caracteres.");
+if (!configuredAdminPassword || configuredAdminPassword.length < 9) {
+  throw new Error("SEED_ADMIN_PASSWORD deve ter pelo menos 9 caracteres.");
 }
 
 const adminEmail: string = configuredAdminEmail;

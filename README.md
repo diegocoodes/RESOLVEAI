@@ -11,7 +11,7 @@ MVP full-stack para centralizar oportunidades de emprego e prospecção comercia
 - Download de PDF ATS em coluna única, limpo, selecionável e rastreável até os fatos de origem.
 - Candidaturas exibidas a partir do banco, sem processos fictícios.
 - Leads: cadastro, origem, auditoria conservadora, score configurável, duplicidade, exportação, exclusão e bloqueio de contato.
-- Prospecção gratuita pelo OpenStreetMap/Nominatim, com resultados temporários, filtro de negócio sem site, atribuição e cadastro manual após revisão.
+- Prospecção por texto livre (`personal`, `personal diego`, profissão ou nome), com resultados internos do OpenStreetMap e atalhos manuais para Google, Google Maps e Instagram.
 - Pipeline Kanban, campanhas, clientes, histórico e análises alimentados somente por registros persistidos.
 - Pesquisa de módulos, drawer mobile, estados de loading/empty/error e feedback por toast.
 

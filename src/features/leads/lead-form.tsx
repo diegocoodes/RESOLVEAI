@@ -12,9 +12,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { LEAD_SEGMENTS } from "@/lib/constants";
 import { leadInputSchema, type LeadInput } from "@/lib/validations/lead";
 
-export function LeadForm() {
+export function LeadForm({ initialValues = {} }: { initialValues?: Partial<LeadInput> }) {
   const router = useRouter();
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LeadInput>({ resolver: zodResolver(leadInputSchema), defaultValues: { source: "MANUAL", contactAllowed: true } });
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LeadInput>({ resolver: zodResolver(leadInputSchema), defaultValues: { source: "MANUAL", contactAllowed: true, ...initialValues } });
 
   async function onSubmit(values: LeadInput) {
     const response = await fetch("/api/leads", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(values) });
@@ -35,7 +35,7 @@ export function LeadForm() {
         <div className="grid gap-4 sm:grid-cols-2">
           <div><Label htmlFor="businessName">Nome comercial *</Label><Input id="businessName" placeholder="Ex.: Studio Movimento" {...register("businessName")} />{error("businessName")}</div>
           <div><Label htmlFor="name">Nome do contato</Label><Input id="name" placeholder="Se estiver publicamente disponível" {...register("name")} /></div>
-          <div><Label htmlFor="niche">Segmento *</Label><select id="niche" className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm outline-none" {...register("niche")}><option value="">Selecione</option>{LEAD_SEGMENTS.map((segment) => <option key={segment}>{segment}</option>)}</select>{error("niche")}</div>
+          <div><Label htmlFor="niche">Segmento ou pesquisa *</Label><Input id="niche" list="lead-form-segments" placeholder="Ex.: personal diego" {...register("niche")} /><datalist id="lead-form-segments">{LEAD_SEGMENTS.map((segment) => <option key={segment} value={segment} />)}</datalist>{error("niche")}</div>
           <div className="grid grid-cols-[1fr_90px] gap-3"><div><Label htmlFor="city">Cidade</Label><Input id="city" placeholder="Recife" {...register("city")} /></div><div><Label htmlFor="state">UF</Label><Input id="state" maxLength={2} placeholder="PE" {...register("state")} /></div></div>
           <div><Label htmlFor="phone">Telefone</Label><Input id="phone" placeholder="(81) 0000-0000" {...register("phone")} /></div>
           <div><Label htmlFor="whatsapp">WhatsApp</Label><Input id="whatsapp" placeholder="5581999999999" {...register("whatsapp")} /></div>

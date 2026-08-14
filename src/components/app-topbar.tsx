@@ -14,7 +14,7 @@ import { initials } from "@/lib/utils";
 const searchableRoutes = [
   { id: "jobs", title: "Vagas", detail: "Oportunidades de emprego", href: "/vagas", type: "Vaga" },
   { id: "leads", title: "Leads", detail: "Oportunidades comerciais", href: "/leads", type: "Lead" },
-  { id: "prospecting", title: "Buscar oportunidades", detail: "OpenStreetMap gratuito", href: "/prospeccao", type: "Lead" },
+  { id: "prospecting", title: "Buscar profissionais", detail: "Google, Instagram e OpenStreetMap", href: "/prospeccao", type: "Lead" },
   { id: "resumes", title: "Currículos", detail: "Versões ATS", href: "/curriculos", type: "Vaga" },
 ];
 

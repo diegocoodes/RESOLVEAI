@@ -1,0 +1,4 @@
+import { PageHeader } from "@/components/page-header";
+import { ApplicationPipeline } from "@/features/applications/application-pipeline";
+export const metadata = { title: "Candidaturas" };
+export default function ApplicationsPage() { return <div className="space-y-6"><PageHeader eyebrow="Oportunidades" title="Candidaturas" description="Acompanhe cada processo seletivo. O envio da candidatura permanece sempre sob o seu controle." /><div className="flex gap-2 overflow-x-auto pb-2">{["Salva", "Analisada", "Currículo gerado", "Candidatura", "Entrevista", "Teste", "Proposta", "Contratado"].map((stage, index) => <div key={stage} className="flex min-w-max items-center gap-2"><span className="rounded-md border border-border bg-surface px-3 py-2 text-[11px] text-muted-foreground">{stage}</span>{index < 7 ? <span className="text-subtle">→</span> : null}</div>)}</div><ApplicationPipeline /></div>; }

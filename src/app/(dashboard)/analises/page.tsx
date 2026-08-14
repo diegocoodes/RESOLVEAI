@@ -1,0 +1,7 @@
+import { BriefcaseBusiness, Sparkles, UsersRound } from "lucide-react";
+import { PageHeader } from "@/components/page-header";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+export const metadata = { title: "Análises IA" };
+export default function AnalysesPage() { return <div className="space-y-6"><PageHeader eyebrow="Inteligência" title="Análises IA" description="Resultados versionados com provedor, fatos de origem e horário para auditoria." /><div className="grid gap-4 lg:grid-cols-2"><Analysis icon={BriefcaseBusiness} title="Frontend Developer Pleno" type="Análise de vaga" provider="deterministic" /><Analysis icon={UsersRound} title="João Performance" type="Oportunidade comercial" provider="deterministic" /></div></div>; }
+function Analysis({ icon: Icon, title, type, provider }: { icon: typeof Sparkles; title: string; type: string; provider: string }) { return <Card><CardContent className="flex items-start gap-4 p-5"><span className="grid size-10 place-items-center rounded-lg border border-border bg-background"><Icon className="size-4 text-accent" /></span><div className="flex-1"><h2 className="text-sm font-medium">{title}</h2><p className="mt-1 text-xs text-muted-foreground">{type} · hoje</p><div className="mt-3 flex gap-2"><Badge variant="neutral">{provider}</Badge><Badge variant="success">Fatos preservados</Badge></div></div></CardContent></Card>; }

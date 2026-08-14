@@ -1,0 +1,5 @@
+import { Circle } from "lucide-react";
+import { PageHeader } from "@/components/page-header";
+const events = [["Currículo personalizado criado", "Nimbus Tecnologia", "Hoje, 10:32"], ["Lead qualificado", "João Performance", "Hoje, 10:02"], ["Mensagem aprovada", "Clínica Vitta", "Ontem, 16:44"], ["Etapa atualizada para Entrevista", "Nimbus Tecnologia", "Ontem, 11:20"]];
+export const metadata = { title: "Histórico" };
+export default function HistoryPage() { return <div className="space-y-6"><PageHeader eyebrow="Inteligência" title="Histórico" description="Linha do tempo unificada de análises, documentos, contatos e mudanças de pipeline." /><div className="rounded-xl border border-border bg-surface p-5">{events.map(([title, detail, time], index) => <div key={title} className="relative flex gap-4 pb-7 last:pb-0">{index < events.length - 1 ? <span className="absolute left-[5px] top-4 h-full w-px bg-border" /> : null}<Circle className="mt-1 size-[11px] shrink-0 fill-accent text-accent" /><div><p className="text-sm font-medium">{title}</p><p className="mt-1 text-xs text-muted-foreground">{detail} · {time}</p></div></div>)}</div></div>; }
